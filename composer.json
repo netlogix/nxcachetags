@@ -1,8 +1,10 @@
 {
   "name": "netlogix/nxcachetags",
   "type": "typo3-cms-extension",
+  "description": "TYPO3 Extension \"nxcachetags\"",
+  "license": "MIT",
   "require": {
-    "php": "^7.2",
+    "php": "^7.4",
     "typo3/cms-core": "^9.5 || ^10.1",
     "ext-pdo": "*"
   },
@@ -22,6 +24,11 @@
   "autoload": {
     "psr-4": {
       "Netlogix\\Nxcachetags\\": "Classes/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Netlogix\\Nxcachetags\\Tests\\": "Tests/"
     }
   },
   "config": {
