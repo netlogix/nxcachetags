@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\ViewHelpers;
 
 use Netlogix\Nxcachetags\Service\CacheTagService;
@@ -12,12 +14,12 @@ class TagEnvironmentViewHelper extends AbstractViewHelper
     /**
      * @var CacheTagService
      */
-    protected $cacheTagService;
+    protected CacheTagService $cacheTagService;
 
     /**
      * @var MinimalLifetimeService
      */
-    protected $minimalLifetimeService;
+    protected MinimalLifetimeService $minimalLifetimeService;
 
     public function injectCacheTagService(CacheTagService $cacheTagService)
     {
@@ -31,7 +33,7 @@ class TagEnvironmentViewHelper extends AbstractViewHelper
 
     public function initializeArguments()
     {
-        $this->registerArgument('objectOrCacheTag', 'mixed', '', false, null);
+        $this->registerArgument('objectOrCacheTag', 'mixed', '');
         $this->registerArgument('lifetime', 'int', '', false, 0);
         $this->registerArgument('lifetimeSource', 'array', '', false, []);
     }

@@ -19,6 +19,6 @@ call_user_func(function () {
         ),
     );
 
-    ExtensionManagementUtility::addTCAcolumns('pages', $tempColumns, 1);
+    ExtensionManagementUtility::addTCAcolumns('pages', $tempColumns);
     ExtensionManagementUtility::addFieldsToPalette('pages', 'caching', 'nxcachetags_cacheperuser');
 });

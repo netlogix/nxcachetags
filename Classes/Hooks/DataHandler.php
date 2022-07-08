@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\Hooks;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -13,7 +15,7 @@ class DataHandler implements SingletonInterface
     /**
      * @var array
      */
-    protected $tagsToFlush = [];
+    protected array $tagsToFlush = [];
 
     public function processCmdmap_preProcess(
         string $command,

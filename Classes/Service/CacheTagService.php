@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\Service;
 
 use Netlogix\Nxcachetags\ObjectIdentificationHelper\ObjectIdentificationHelperInterface;
@@ -26,27 +28,27 @@ class CacheTagService extends AbstractService implements SingletonInterface
     /**
      * @var ObjectManagerInterface
      */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     /**
      * @var ConfigurationManagerInterface
      */
-    protected $configurationManager;
+    protected ConfigurationManagerInterface $configurationManager;
 
     /**
      * @var CacheManager
      */
-    protected $cacheManager;
+    protected CacheManager $cacheManager;
 
     /**
      * @var ObjectIdentificationHelperInterface[]
      */
-    protected $objectIdentificationHelpers;
+    protected array $objectIdentificationHelpers;
 
     /**
      * @var bool[]
      */
-    protected $cacheIdentifierDefaults = [];
+    protected array $cacheIdentifierDefaults = [];
 
     /**
      * An array of environments.
@@ -57,7 +59,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
      *
      * @var array
      */
-    protected $environments = [
+    protected array $environments = [
         [
             self::ENVIRONMENT_TAGS => [],
             self::ENVIRONMENT_LIFETIME => null,
@@ -115,7 +117,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
         bool $includeLanguage = false,
         bool $includeUserGroups = false,
         bool $includeBackendLogin = false,
-        bool $includeRootPage = false,
+        bool $includeRootPage = false
     ): string {
 
         foreach ([
@@ -144,9 +146,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
             'params' => $params,
         ];
 
-        $cacheIdentifier = md5(join('_', $this->createCacheTagsInternal($cacheIdentifierModifiers)));
-
-        return $cacheIdentifier;
+        return md5(join('_', $this->createCacheTagsInternal($cacheIdentifierModifiers)));
     }
 
     /**
@@ -169,11 +169,11 @@ class CacheTagService extends AbstractService implements SingletonInterface
      * @param mixed $params
      * @return array
      */
-    public function createCacheTags($params)
+    public function createCacheTags($params): array
     {
         $cacheTags = $this->createCacheTagsInternal($params);
         foreach ($cacheTags as &$cacheTag) {
-            $cacheTag = preg_replace('/[^a-zA-Z0-9_-]+/', '_', $cacheTag);
+            $cacheTag = preg_replace('/[^a-zA-Z\d_-]+/', '_', $cacheTag);
             if (strlen($cacheTag) > 250) {
                 $cacheTag = substr($cacheTag, 0, 100) . md5($cacheTag) . substr($cacheTag, -100);
             }
@@ -305,7 +305,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
      * @param array $identifiers
      * @return array
      */
-    public function findTableCacheTagsForLifetimeSources(array $lifetimeSource = [], array $identifiers = [])
+    public function findTableCacheTagsForLifetimeSources(array $lifetimeSource = [], array $identifiers = []): array
     {
 
         $lifetimeSource = $this->filterValidLifetimeSourceTables($lifetimeSource);
@@ -313,7 +313,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
         foreach ($identifiers as $identifier) {
             if (isset($lifetimeSource[$identifier])) {
                 unset($lifetimeSource[$identifier]);
-            } elseif (preg_match('%^(?<table>[a-z0-9_-]+)[_:](?<uid>\d+)$%', $identifier, $matches)) {
+            } elseif (preg_match('%^(?<table>[a-z\d_-]+)[_:](?<uid>\d+)$%', $identifier, $matches)) {
                 if (isset($lifetimeSource[$matches['table']])) {
                     unset($lifetimeSource[$matches['table']]);
                 }
@@ -359,9 +359,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
             $cacheParts = [];
             foreach ($params as $cachePartSource) {
                 $cachePart = $this->createCacheTagsInternal($cachePartSource);
-                if ($cachePart !== null) {
-                    $cacheParts = array_merge($cacheParts, $cachePart);
-                }
+                $cacheParts = array_merge($cacheParts, $cachePart);
             }
 
             return array_unique($cacheParts);

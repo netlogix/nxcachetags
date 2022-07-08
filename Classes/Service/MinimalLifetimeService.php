@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\Service;
 
 use PDO;
@@ -15,7 +17,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
     /**
      * @var ConfigurationManagerInterface
      */
-    protected $configurationManager;
+    protected ConfigurationManagerInterface $configurationManager;
 
     public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
     {
@@ -34,8 +36,8 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
 
         $lifetimeSource = $this->filterValidLifetimeSourceTables($lifetimeSource);
 
-        foreach ((array)$identifiers as $identifier) {
-            if (preg_match('%^(?<table>[a-z0-9_-]+)[_:](?<uid>\d+)$%', $identifier, $matches)) {
+        foreach ($identifiers as $identifier) {
+            if (preg_match('%^(?<table>[a-z\d_-]+)[_:](?<uid>\d+)$%', $identifier, $matches)) {
                 $expires = $this->findMinimalLifetimeForRecord($expires, $matches['table'], (int)$matches['uid']);
                 if (isset($lifetimeSource[$matches['table']])) {
                     unset($lifetimeSource[$matches['table']]);

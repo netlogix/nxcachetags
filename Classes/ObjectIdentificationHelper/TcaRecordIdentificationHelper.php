@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\ObjectIdentificationHelper;
 
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
@@ -18,7 +20,7 @@ class TcaRecordIdentificationHelper implements ObjectIdentificationHelperInterfa
     /**
      * @var DataMapper
      */
-    protected $dataMapper;
+    protected DataMapper $dataMapper;
 
     public function injectDataMapper(DataMapper $dataMapper)
     {
@@ -26,15 +28,15 @@ class TcaRecordIdentificationHelper implements ObjectIdentificationHelperInterfa
     }
 
     /**
-     * @param $cacheTag
+     * @param $object
      * @return string[]
      */
-    public function identifyCacheTagForObject($cacheTag): array
+    public function identifyCacheTagForObject($object): array
     {
-        if (!is_string($cacheTag)) {
+        if (!is_string($object)) {
             return [];
         }
-        if (!preg_match('%^(?<tableName>[a-z0-9_]+)\s*[_:-]\s*(?<recordUid>\\d+)$%', $cacheTag, $matches)) {
+        if (!preg_match('%^(?<tableName>[a-z\d_]+)\s*[_:-]\s*(?<recordUid>\\d+)$%', $object, $matches)) {
             return [];
         }
         return [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\ObjectIdentificationHelper;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
@@ -15,7 +17,7 @@ class DomainObjectIdentificationHelper implements ObjectIdentificationHelperInte
     /**
      * @var DataMapper
      */
-    protected $dataMapper;
+    protected DataMapper $dataMapper;
 
     public function injectDataMapper(DataMapper $dataMapper)
     {

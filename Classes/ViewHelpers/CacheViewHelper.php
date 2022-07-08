@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\ViewHelpers;
 
 use Netlogix\Nxcachetags\Service\CacheService;
@@ -12,12 +14,12 @@ class CacheViewHelper extends AbstractViewHelper
     /**
      * @var CacheService
      */
-    protected $cacheService;
+    protected CacheService $cacheService;
 
     /**
      * @var RenderingContextIdentificationService
      */
-    protected $renderingContextIdentificationService;
+    protected RenderingContextIdentificationService $renderingContextIdentificationService;
 
     protected $escapeOutput = false;
 
@@ -43,7 +45,7 @@ class CacheViewHelper extends AbstractViewHelper
         $this->registerArgument('includeRootPage', 'bool', '', null, true);
     }
 
-    public function render()
+    public function render(): string
     {
         $identifiedBy = $this->arguments['identifiedBy'];
         foreach ($identifiedBy as $key => $identifierPart) {

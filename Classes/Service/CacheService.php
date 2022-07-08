@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\Service;
 
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -17,17 +19,17 @@ class CacheService extends AbstractService implements SingletonInterface
     /**
      * @var FrontendInterface
      */
-    protected $cache;
+    protected FrontendInterface $cache;
 
     /**
      * @var CacheTagService
      */
-    protected $cacheTagService;
+    protected CacheTagService $cacheTagService;
 
     /**
      * @var MinimalLifetimeService
      */
-    protected $minimalLifetimeService;
+    protected MinimalLifetimeService $minimalLifetimeService;
 
     public function injectCacheManager(CacheManager $cacheManager)
     {

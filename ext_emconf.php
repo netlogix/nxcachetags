@@ -1,5 +1,6 @@
-<?php
+<?php /** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
+/** @noinspection PhpUndefinedVariableInspection */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'netlogix CacheTags',
     'description' => 'Helper mechanism to add cache tags to pages',

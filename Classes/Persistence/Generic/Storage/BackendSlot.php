@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\Persistence\Generic\Storage;
 
 use Netlogix\Nxcachetags\Service\CacheTagService;
@@ -17,19 +19,19 @@ class BackendSlot implements SingletonInterface
     /**
      * @var ObjectManagerInterface
      */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     /**
      * @var CacheTagService
      */
-    protected $cacheTagService;
+    protected CacheTagService $cacheTagService;
 
     /**
      * @var DataMapper
      */
-    protected $dataMapper;
+    protected DataMapper $dataMapper;
 
-    protected $newObjectTags = [];
+    protected array $newObjectTags = [];
 
     public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
