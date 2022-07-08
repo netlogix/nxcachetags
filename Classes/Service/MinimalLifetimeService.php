@@ -26,7 +26,6 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
 
     public function findMinimalLifetime(int $lifetime, array $identifiers = [], array $lifetimeSource = []): int
     {
-
         $now = $GLOBALS['ACCESS_TIME'];
         if (!$lifetime) {
             $expires = PHP_INT_MAX;
@@ -43,7 +42,6 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
                     unset($lifetimeSource[$matches['table']]);
                 }
             }
-
         }
 
         $storagePids = $this->getStoragePids($lifetimeSource);
@@ -93,6 +91,30 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
         return $expires;
     }
 
+    protected function getStoragePids(array $lifetimeSource = []): array
+    {
+        $frameworkConfiguration = $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK
+        );
+
+        foreach ($lifetimeSource as $tableName) {
+            if (in_array($tableName, $frameworkConfiguration['persistence']['noStoragePidForCacheLifetime'])) {
+                return [];
+            }
+        }
+        $storagePids = array_unique(
+            GeneralUtility::intExplode(',', $frameworkConfiguration['persistence']['storagePid'])
+        );
+
+        $storagePids = array_flip($storagePids);
+        if (isset($storagePids[0])) {
+            unset($storagePids[0]);
+        }
+        $storagePids = array_flip($storagePids);
+
+        return array_values($storagePids);
+    }
+
     protected function findMinimalLifetimeForTable(int $expires, string $tableName, array $storagePids = []): int
     {
         if (!$GLOBALS['TCA'][$tableName]) {
@@ -106,15 +128,19 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
         foreach (['starttime', 'endtime'] as $field) {
             if (isset($GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns'][$field])) {
                 $enableField = $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns'][$field];
-                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
+                    $tableName
+                );
 
                 $select = sprintf('MIN(%s) AS minValue', $enableField);
                 $query = $queryBuilder
                     ->select($select)
                     ->from($tableName)
                     ->where(
-                        $queryBuilder->expr()->gt($enableField,
-                            $queryBuilder->createNamedParameter($GLOBALS['ACCESS_TIME'], PDO::PARAM_INT))
+                        $queryBuilder->expr()->gt(
+                            $enableField,
+                            $queryBuilder->createNamedParameter($GLOBALS['ACCESS_TIME'], PDO::PARAM_INT)
+                        )
                     )
                     ->setMaxResults(1);
 
@@ -131,27 +157,6 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
         }
 
         return $expires;
-    }
-
-    protected function getStoragePids(array $lifetimeSource = []): array
-    {
-
-        $frameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-
-        foreach ($lifetimeSource as $tableName) {
-            if (in_array($tableName, $frameworkConfiguration['persistence']['noStoragePidForCacheLifetime'])) {
-                return [];
-            }
-        }
-        $storagePids = array_unique(GeneralUtility::intExplode(',', $frameworkConfiguration['persistence']['storagePid']));
-
-        $storagePids = array_flip($storagePids);
-        if (isset($storagePids[0])) {
-            unset($storagePids[0]);
-        }
-        $storagePids = array_flip($storagePids);
-
-        return array_values($storagePids);
     }
 
     protected function getTyposcriptFrontendController(): TypoScriptFrontendController

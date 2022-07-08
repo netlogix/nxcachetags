@@ -29,13 +29,13 @@ class UserToHashBaseService implements SingletonInterface
         array &$params,
         TypoScriptFrontendController $typoScriptFrontendController
     ) {
-
         if (!$typoScriptFrontendController->page['nxcachetags_cacheperuser']) {
             return;
         }
 
-        $params['hashParameters']['Nxcachetags\\UserToHashBaseService'] = @intval($typoScriptFrontendController->fe_user->user['uid']);
-
+        $params['hashParameters']['Nxcachetags\\UserToHashBaseService'] = @intval(
+            $typoScriptFrontendController->fe_user->user['uid']
+        );
     }
 
 }

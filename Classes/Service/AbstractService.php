@@ -14,7 +14,6 @@ abstract class AbstractService
 
     protected function filterValidLifetimeSourceTables(array $lifetimeSource = []): array
     {
-
         $validLifetimeSource = [];
         foreach ($lifetimeSource as $tableName) {
             if (!isset($GLOBALS['TCA'][$tableName])) {

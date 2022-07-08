@@ -33,6 +33,16 @@ class DataHandler implements SingletonInterface
         }
     }
 
+    protected function addRootlineTags(int $pageUid)
+    {
+        $pageRecord = BackendUtility::getRecord('pages', $pageUid);
+        $cacheBuster = is_array($pageRecord) ? $pageRecord['pid'] : $pageUid;
+        // Hack to avoid static cache after move
+        foreach (BackendUtility::BEgetRootLine($pageUid, 'AND ' . $cacheBuster . '=' . $cacheBuster) as $page) {
+            $this->tagsToFlush[] = 'rootline_' . $page['uid'];
+        }
+    }
+
     /**
      * Flushes the cache if a news record was edited.
      */
@@ -61,16 +71,6 @@ class DataHandler implements SingletonInterface
                 }
             }
             $this->tagsToFlush = [];
-        }
-    }
-
-    protected function addRootlineTags(int $pageUid)
-    {
-        $pageRecord = BackendUtility::getRecord('pages', $pageUid);
-        $cacheBuster = is_array($pageRecord) ? $pageRecord['pid'] : $pageUid;
-        // Hack to avoid static cache after move
-        foreach (BackendUtility::BEgetRootLine($pageUid, 'AND ' . $cacheBuster . '=' . $cacheBuster) as $page) {
-            $this->tagsToFlush[] = 'rootline_' . $page['uid'];
         }
     }
 

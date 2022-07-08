@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpMissingStrictTypesDeclarationInspection */
+<?php
+/** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
 /** @noinspection PhpUndefinedVariableInspection */
 $EM_CONF[$_EXTKEY] = [

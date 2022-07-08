@@ -28,7 +28,8 @@ class CacheViewHelper extends AbstractViewHelper
         $this->cacheService = $cacheService;
     }
 
-    public function injectRenderingContextIdentificationService(RenderingContextIdentificationService $renderingContextIdentificationService
+    public function injectRenderingContextIdentificationService(
+        RenderingContextIdentificationService $renderingContextIdentificationService
     ) {
         $this->renderingContextIdentificationService = $renderingContextIdentificationService;
     }
@@ -50,7 +51,9 @@ class CacheViewHelper extends AbstractViewHelper
         $identifiedBy = $this->arguments['identifiedBy'];
         foreach ($identifiedBy as $key => $identifierPart) {
             if (!$identifierPart) {
-                $identifiedBy[$key] = $this->renderingContextIdentificationService->identifyRenderingContext($this->renderingContext);
+                $identifiedBy[$key] = $this->renderingContextIdentificationService->identifyRenderingContext(
+                    $this->renderingContext
+                );
             }
         }
 
