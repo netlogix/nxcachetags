@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext" original="messages" date="2014-01-27T13:48:05Z" product-name="nxcachetags">
+		<header/>
+		<body>
+			<trans-unit id="pages.nxcachetags_cacheperuser">
+				<source xml:lang="en">Individual Cache</source>
+			</trans-unit>
+			<trans-unit id="pages.nxcachetags_cacheperuser.checkbox_1_formlabel">
+				<source xml:lang="en">Per FE-User</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

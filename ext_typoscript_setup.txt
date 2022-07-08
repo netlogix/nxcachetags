@@ -1,0 +1,28 @@
+config.tx_nxcachetags {
+	settings {
+		objectIdentificationHelpers {
+			##  Instances of ObjectIdentificationHelperInterface. The array key indicates execution order.
+			1389369822 = Netlogix\Nxcachetags\ObjectIdentificationHelper\DomainObjectIdentificationHelper
+			1611830664 = Netlogix\Nxcachetags\ObjectIdentificationHelper\TcaRecordIdentificationHelper
+			1301707660 = Netlogix\Nxcachetags\ObjectIdentificationHelper\FalObjectIdentificationHelper
+		}
+
+		cacheIdentifierDefaults {
+			includeLanguage = 1
+			includeUserGroups = 1
+			includeBackendLogin = 1
+			includeRootPage = 1
+			includeDomainRecord = 1
+		}
+	}
+}
+
+config.tx_extbase {
+	persistence {
+		noStoragePidForCacheLifetime {
+			## Every table name mentioned here is meant to not respect storage pids
+		}
+	}
+}
+
+module.tx_nxcachetags < config.tx_nxcachetags

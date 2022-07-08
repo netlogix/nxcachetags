@@ -1,0 +1,21 @@
+{
+  "name": "netlogix/nxcachetags",
+  "type": "typo3-cms-extension",
+  "require": {
+    "php": "^7.2",
+    "typo3/cms-core": "^9.5 || ^10.1"
+  },
+  "replace": {
+    "netlogix/nxcachetags": "self.version"
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "nxcachetags"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Netlogix\\Nxcachetags\\": "Classes/"
+    }
+  }
+}
