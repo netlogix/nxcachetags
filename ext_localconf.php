@@ -15,20 +15,6 @@ call_user_func(function () {
         ];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cache_pages'] = [
-        'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
-        'backend' => \Netlogix\Nxcachetags\Cache\Backend\RetrievableTagsProxyBackend::class,
-        'options' => [],
-        'groups' => ['pages', 'all']
-    ];
-
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cache_pages_nxcachetags_proxy'] = [
-        'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
-        'backend' => \Netlogix\Nxcachetags\Cache\Backend\Typo3DatabaseBackend::class,
-        'options' => [],
-        'groups' => ['pages', 'all']
-    ];
-
     $dispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
     foreach (['afterInsertObject', 'afterUpdateObject', 'flushCacheForObject'] as $command) {
         $dispatcher->connect(

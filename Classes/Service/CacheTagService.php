@@ -107,7 +107,6 @@ class CacheTagService extends AbstractService implements SingletonInterface
      * @param bool $includeUserGroups
      * @param bool $includeBackendLogin
      * @param bool $includeRootPage
-     * @param bool $includeDomainRecord
      * @return string
      * @throws AspectNotFoundException
      */
@@ -117,7 +116,6 @@ class CacheTagService extends AbstractService implements SingletonInterface
         bool $includeUserGroups = false,
         bool $includeBackendLogin = false,
         bool $includeRootPage = false,
-        bool $includeDomainRecord = false
     ): string {
 
         foreach ([
@@ -125,7 +123,6 @@ class CacheTagService extends AbstractService implements SingletonInterface
                      'includeUserGroups',
                      'includeBackendLogin',
                      'includeRootPage',
-                     'includeDomainRecord'
                  ] as $argumentName) {
             if (is_null(${$argumentName})) {
                 ${$argumentName} = $this->cacheIdentifierDefaults[$argumentName];
@@ -144,34 +141,8 @@ class CacheTagService extends AbstractService implements SingletonInterface
             'includeUserGroups' => 'includeUserGroups-' . (!$includeUserGroups ? '' : implode('-', $controller->fe_user->groupData['uid'])),
             'includeBackendLogin' => 'includeBackendLogin-' . (!$includeBackendLogin ? '' : $context->getPropertyFromAspect('backend.user',
                     'isLoggedIn', false)),
-            'includeDomainName' => 'includeDomainName-' . (!$includeRootPage ? '' : $controller->rootLine[0]['uid']),
             'params' => $params,
         ];
-
-        if ($includeDomainRecord) {
-
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getQueryBuilderForTable('sys_domain');
-
-            $domainRecord = $queryBuilder
-                ->select('*')
-                ->from('sys_domain')
-                ->where(
-                    $queryBuilder->expr()->eq('redirectTo', $queryBuilder->createNamedParameter('', PDO::PARAM_STR))
-                )
-                ->andWhere(
-                    $queryBuilder->expr()->eq('domainName',
-                        $queryBuilder->createNamedParameter(GeneralUtility::getIndpEnv('HTTP_HOST'), PDO::PARAM_STR))
-                )
-                ->setMaxResults(1)
-                ->execute()
-                ->fetch();
-
-            $domainRecordId = $result = (is_array($domainRecord) ? intval($domainRecord['uid']) : 0);
-            if ($domainRecordId) {
-                $cacheIdentifierModifiers['includeDomainRecord'] = $domainRecordId;
-            }
-        }
 
         $cacheIdentifier = md5(join('_', $this->createCacheTagsInternal($cacheIdentifierModifiers)));
 
@@ -430,7 +401,6 @@ class CacheTagService extends AbstractService implements SingletonInterface
                      'includeUserGroups',
                      'includeBackendLogin',
                      'includeRootPage',
-                     'includeDomainRecord'
                  ] as $argumentName) {
             if (isset($settings['config.']['tx_nxcachetags.']['settings.']['cacheIdentifierDefaults.'][$argumentName])) {
                 $this->cacheIdentifierDefaults[$argumentName] = (bool)$settings['config.']['tx_nxcachetags.']['settings.']['cacheIdentifierDefaults.'][$argumentName];
