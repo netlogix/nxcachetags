@@ -41,7 +41,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
     /**
      * @var ObjectIdentificationHelperInterface[]
      */
-    protected array $objectIdentificationHelpers;
+    protected array $objectIdentificationHelpers = [];
 
     /**
      * @var bool[]
