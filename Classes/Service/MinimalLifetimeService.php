@@ -134,7 +134,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
 
                 $select = sprintf('MIN(%s) AS minValue', $enableField);
                 $query = $queryBuilder
-                    ->select($select)
+                    ->selectLiteral($select)
                     ->from($tableName)
                     ->where(
                         $queryBuilder->expr()->gt(
