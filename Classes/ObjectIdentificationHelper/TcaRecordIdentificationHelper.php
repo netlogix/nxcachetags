@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Netlogix\Nxcachetags\ObjectIdentificationHelper;
 
-use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
-
 /**
  * Allow for several variants of cache tags which all target a specific
  * row in the database.
@@ -17,15 +15,6 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
  */
 class TcaRecordIdentificationHelper implements ObjectIdentificationHelperInterface
 {
-    /**
-     * @var DataMapper
-     */
-    protected DataMapper $dataMapper;
-
-    public function injectDataMapper(DataMapper $dataMapper)
-    {
-        $this->dataMapper = $dataMapper;
-    }
 
     /**
      * @param $object
