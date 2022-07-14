@@ -4,8 +4,8 @@
   "description": "TYPO3 Extension \"nxcachetags\"",
   "license": "MIT",
   "require": {
-    "php": "^7.4",
-    "typo3/cms-core": "^10.1",
+    "php": "^7.4 || ^8.0 || ^8.1",
+    "typo3/cms-core": "^10.4 || ^11.5",
     "ext-pdo": "*"
   },
   "require-dev": {
