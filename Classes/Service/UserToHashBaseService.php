@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\Service;
 
 use TYPO3\CMS\Core\SingletonInterface;
@@ -27,13 +29,13 @@ class UserToHashBaseService implements SingletonInterface
         array &$params,
         TypoScriptFrontendController $typoScriptFrontendController
     ) {
-
         if (!$typoScriptFrontendController->page['nxcachetags_cacheperuser']) {
             return;
         }
 
-        $params['hashParameters']['Nxcachetags\\UserToHashBaseService'] = @intval($typoScriptFrontendController->fe_user->user['uid']);
-
+        $params['hashParameters']['Nxcachetags\\UserToHashBaseService'] = @intval(
+            $typoScriptFrontendController->fe_user->user['uid']
+        );
     }
 
 }

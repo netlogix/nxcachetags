@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\Service;
 
 use TYPO3\CMS\Core\SingletonInterface;
@@ -23,10 +25,12 @@ class RenderingContextIdentificationService extends RenderingContext implements 
      */
     public function identifyRenderingContext(RenderingContextInterface $renderingContext): string
     {
-        return md5(serialize([
-            'variableProvider' => $renderingContext->getVariableProvider(),
-            'viewHelperVariableContainer' => $renderingContext->getViewHelperVariableContainer(),
-        ]));
+        return md5(
+            serialize([
+                'variableProvider' => $renderingContext->getVariableProvider(),
+                'viewHelperVariableContainer' => $renderingContext->getViewHelperVariableContainer(),
+            ])
+        );
     }
 
 }

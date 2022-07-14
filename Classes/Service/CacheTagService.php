@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\Service;
 
 use Netlogix\Nxcachetags\ObjectIdentificationHelper\ObjectIdentificationHelperInterface;
-use PDO;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -20,33 +20,33 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 class CacheTagService extends AbstractService implements SingletonInterface
 {
 
-    const ENVIRONMENT_TAGS = 't';
-    const ENVIRONMENT_LIFETIME = 'l';
+    public const ENVIRONMENT_TAGS = 't';
+    public const ENVIRONMENT_LIFETIME = 'l';
 
     /**
      * @var ObjectManagerInterface
      */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     /**
      * @var ConfigurationManagerInterface
      */
-    protected $configurationManager;
+    protected ConfigurationManagerInterface $configurationManager;
 
     /**
      * @var CacheManager
      */
-    protected $cacheManager;
+    protected CacheManager $cacheManager;
 
     /**
      * @var ObjectIdentificationHelperInterface[]
      */
-    protected $objectIdentificationHelpers;
+    protected array $objectIdentificationHelpers = [];
 
     /**
      * @var bool[]
      */
-    protected $cacheIdentifierDefaults = [];
+    protected array $cacheIdentifierDefaults = [];
 
     /**
      * An array of environments.
@@ -57,7 +57,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
      *
      * @var array
      */
-    protected $environments = [
+    protected array $environments = [
         [
             self::ENVIRONMENT_TAGS => [],
             self::ENVIRONMENT_LIFETIME => null,
@@ -85,6 +85,38 @@ class CacheTagService extends AbstractService implements SingletonInterface
         $this->initializeCacheIdentifierDefaults();
     }
 
+    protected function initializeObjectIdentificationHelpers()
+    {
+        $settings = $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
+        );
+        foreach ($settings['config.']['tx_nxcachetags.']['settings.']['objectIdentificationHelpers.'] as $key => $objectIdentificationHelperName) {
+            $this->objectIdentificationHelpers[$key] = $this->objectManager->get($objectIdentificationHelperName);
+        }
+        ksort($this->objectIdentificationHelpers);
+    }
+
+    protected function initializeCacheIdentifierDefaults()
+    {
+        $settings = $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
+        );
+        foreach (
+            [
+                'includeLanguage',
+                'includeUserGroups',
+                'includeBackendLogin',
+                'includeRootPage',
+            ] as $argumentName
+        ) {
+            if (isset($settings['config.']['tx_nxcachetags.']['settings.']['cacheIdentifierDefaults.'][$argumentName])) {
+                $this->cacheIdentifierDefaults[$argumentName] = (bool)$settings['config.']['tx_nxcachetags.']['settings.']['cacheIdentifierDefaults.'][$argumentName];
+            } else {
+                $this->cacheIdentifierDefaults[$argumentName] = true;
+            }
+        }
+    }
+
     /**
      * Creates a cache tag based on various input types.
      *
@@ -107,7 +139,6 @@ class CacheTagService extends AbstractService implements SingletonInterface
      * @param bool $includeUserGroups
      * @param bool $includeBackendLogin
      * @param bool $includeRootPage
-     * @param bool $includeDomainRecord
      * @return string
      * @throws AspectNotFoundException
      */
@@ -116,17 +147,16 @@ class CacheTagService extends AbstractService implements SingletonInterface
         bool $includeLanguage = false,
         bool $includeUserGroups = false,
         bool $includeBackendLogin = false,
-        bool $includeRootPage = false,
-        bool $includeDomainRecord = false
+        bool $includeRootPage = false
     ): string {
-
-        foreach ([
-                     'includeLanguage',
-                     'includeUserGroups',
-                     'includeBackendLogin',
-                     'includeRootPage',
-                     'includeDomainRecord'
-                 ] as $argumentName) {
+        foreach (
+            [
+                'includeLanguage',
+                'includeUserGroups',
+                'includeBackendLogin',
+                'includeRootPage',
+            ] as $argumentName
+        ) {
             if (is_null(${$argumentName})) {
                 ${$argumentName} = $this->cacheIdentifierDefaults[$argumentName];
             }
@@ -140,42 +170,27 @@ class CacheTagService extends AbstractService implements SingletonInterface
                     $context->getPropertyFromAspect('language', 'id'),
                     $context->getPropertyFromAspect('language', 'contentId'),
                 ])),
-            'includeUser' => 'includeUser-' . ((!$controller->page['nxcachetags_cacheperuser'] || !$controller->fe_user->user) ? 0 : @intval($controller->fe_user->user['uid'])),
-            'includeUserGroups' => 'includeUserGroups-' . (!$includeUserGroups ? '' : implode('-', $controller->fe_user->groupData['uid'])),
-            'includeBackendLogin' => 'includeBackendLogin-' . (!$includeBackendLogin ? '' : $context->getPropertyFromAspect('backend.user',
-                    'isLoggedIn', false)),
-            'includeDomainName' => 'includeDomainName-' . (!$includeRootPage ? '' : $controller->rootLine[0]['uid']),
+            'includeUser' => 'includeUser-' . ((!$controller->page['nxcachetags_cacheperuser'] || !$controller->fe_user->user) ? 0 : @intval(
+                    $controller->fe_user->user['uid']
+                )),
+            'includeUserGroups' => 'includeUserGroups-' . (!$includeUserGroups ? '' : implode(
+                    '-',
+                    $controller->fe_user->groupData['uid']
+                )),
+            'includeBackendLogin' => 'includeBackendLogin-' . (!$includeBackendLogin ? '' : $context->getPropertyFromAspect(
+                    'backend.user',
+                    'isLoggedIn',
+                    false
+                )),
             'params' => $params,
         ];
 
-        if ($includeDomainRecord) {
+        return md5(join('_', $this->createCacheTagsInternal($cacheIdentifierModifiers)));
+    }
 
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getQueryBuilderForTable('sys_domain');
-
-            $domainRecord = $queryBuilder
-                ->select('*')
-                ->from('sys_domain')
-                ->where(
-                    $queryBuilder->expr()->eq('redirectTo', $queryBuilder->createNamedParameter('', PDO::PARAM_STR))
-                )
-                ->andWhere(
-                    $queryBuilder->expr()->eq('domainName',
-                        $queryBuilder->createNamedParameter(GeneralUtility::getIndpEnv('HTTP_HOST'), PDO::PARAM_STR))
-                )
-                ->setMaxResults(1)
-                ->execute()
-                ->fetch();
-
-            $domainRecordId = $result = (is_array($domainRecord) ? intval($domainRecord['uid']) : 0);
-            if ($domainRecordId) {
-                $cacheIdentifierModifiers['includeDomainRecord'] = $domainRecordId;
-            }
-        }
-
-        $cacheIdentifier = md5(join('_', $this->createCacheTagsInternal($cacheIdentifierModifiers)));
-
-        return $cacheIdentifier;
+    protected function getTyposcriptFrontendController(): TypoScriptFrontendController
+    {
+        return $GLOBALS['TSFE'];
     }
 
     /**
@@ -198,26 +213,62 @@ class CacheTagService extends AbstractService implements SingletonInterface
      * @param mixed $params
      * @return array
      */
-    public function createCacheTags($params)
+    protected function createCacheTagsInternal($params): array
     {
-        $cacheTags = $this->createCacheTagsInternal($params);
-        foreach ($cacheTags as &$cacheTag) {
-            $cacheTag = preg_replace('/[^a-zA-Z0-9_-]+/', '_', $cacheTag);
-            if (strlen($cacheTag) > 250) {
-                $cacheTag = substr($cacheTag, 0, 100) . md5($cacheTag) . substr($cacheTag, -100);
-            }
+        if (is_array($params) && count($params) === 1) {
+            $params = reset($params);
         }
 
-        return $cacheTags;
+        if ($params === null) {
+            return [];
+        } elseif (is_scalar($params)) {
+            return [$params];
+        } elseif (is_array($params)) {
+            $cacheParts = [];
+            foreach ($params as $cachePartSource) {
+                $cachePart = $this->createCacheTagsInternal($cachePartSource);
+                $cacheParts = array_merge($cacheParts, $cachePart);
+            }
+
+            return array_unique($cacheParts);
+        } elseif (is_object($params)) {
+            return $this->identifyCacheTagForObject($params);
+        }
+
+        return [];
     }
 
     /**
-     * Adds new cache tags to the page cache.
+     * @param $params
+     * @return array
      */
-    public function addPageCacheTags($objectOrCacheTag)
+    public function identifyCacheTagForObject($params): array
     {
-        $tagNames = $this->createCacheTags($objectOrCacheTag);
-        $this->getTyposcriptFrontendController()->addCacheTags($tagNames);
+        foreach ($this->getObjectIdentificationHelpers() as $objectIdentificationHelper) {
+            assert($objectIdentificationHelper instanceof ObjectIdentificationHelperInterface);
+            $identifiedContent = $objectIdentificationHelper->identifyCacheTagForObject($params);
+            if (!$identifiedContent) {
+                continue;
+            }
+            $combinedIdentifierStrings = $this->createCacheTagsInternal($identifiedContent);
+            if (!$combinedIdentifierStrings) {
+                continue;
+            }
+
+            return $combinedIdentifierStrings;
+        }
+
+        return [];
+    }
+
+    /**
+     * Returns object identification helpers
+     *
+     * @return ObjectIdentificationHelperInterface[]
+     */
+    protected function getObjectIdentificationHelpers(): array
+    {
+        return $this->objectIdentificationHelpers;
     }
 
     public function exposeCacheLifetime(array $params, TypoScriptFrontendController $tsfe)
@@ -228,6 +279,14 @@ class CacheTagService extends AbstractService implements SingletonInterface
         } else {
             return min($params['cacheTimeout'], $environmentLifetime);
         }
+    }
+
+    /**
+     * Returns the lifetime set for this environment.
+     */
+    public function getEnvironmentLifetime(): int
+    {
+        return $this->environments[0][self::ENVIRONMENT_LIFETIME];
     }
 
     /**
@@ -248,7 +307,48 @@ class CacheTagService extends AbstractService implements SingletonInterface
                 $environment[self::ENVIRONMENT_TAGS][$tagName] = $tagName;
             }
         }
+    }
 
+    /**
+     * Creates cache tags based on various input types.
+     *
+     * string, integer, float:
+     *     This one is used as cache tag. Add e.g. "pages_5" or "mycachetag".
+     *
+     * AbstractDomainObject:
+     *     The object is converted to the "$tableName_$uid", just like the
+     *     TCEmain/DataHandler acts.
+     *
+     * DataTransferInterface:
+     *     Its very innermostSelf is used like normal AbstractDomainObjects.
+     *
+     * array, Iterator:
+     *     All segments are joined by the underscore character, individuals
+     *     are treated according to the definition from above.
+     *
+     * @param mixed $params
+     * @return array
+     */
+    public function createCacheTags($params): array
+    {
+        $cacheTags = $this->createCacheTagsInternal($params);
+        foreach ($cacheTags as &$cacheTag) {
+            $cacheTag = preg_replace('/[^a-zA-Z\d_-]+/', '_', $cacheTag);
+            if (strlen($cacheTag) > 250) {
+                $cacheTag = substr($cacheTag, 0, 100) . md5($cacheTag) . substr($cacheTag, -100);
+            }
+        }
+
+        return $cacheTags;
+    }
+
+    /**
+     * Adds new cache tags to the page cache.
+     */
+    public function addPageCacheTags($objectOrCacheTag)
+    {
+        $tagNames = $this->createCacheTags($objectOrCacheTag);
+        $this->getTyposcriptFrontendController()->addCacheTags($tagNames);
     }
 
     public function decreaseEnvironmentLifetime(int $lifetime)
@@ -299,150 +399,25 @@ class CacheTagService extends AbstractService implements SingletonInterface
     }
 
     /**
-     * Returns the lifetime set for this environment.
-     */
-    public function getEnvironmentLifetime(): int
-    {
-        return $this->environments[0][self::ENVIRONMENT_LIFETIME];
-    }
-
-    /**
-     * @param $params
-     * @return array
-     */
-    public function identifyCacheTagForObject($params): array
-    {
-        foreach ($this->getObjectIdentificationHelpers() as $objectIdentificationHelper) {
-            assert($objectIdentificationHelper instanceof ObjectIdentificationHelperInterface);
-            $identifiedContent = $objectIdentificationHelper->identifyCacheTagForObject($params);
-            if (!$identifiedContent) {
-                continue;
-            }
-            $combinedIdentifierStrings = $this->createCacheTagsInternal($identifiedContent);
-            if (!$combinedIdentifierStrings) {
-                continue;
-            }
-
-            return $combinedIdentifierStrings;
-        }
-
-        return [];
-    }
-
-    /**
      * @param array $lifetimeSource
      * @param array $identifiers
      * @return array
      */
-    public function findTableCacheTagsForLifetimeSources(array $lifetimeSource = [], array $identifiers = [])
+    public function findTableCacheTagsForLifetimeSources(array $lifetimeSource = [], array $identifiers = []): array
     {
-
         $lifetimeSource = $this->filterValidLifetimeSourceTables($lifetimeSource);
 
         foreach ($identifiers as $identifier) {
             if (isset($lifetimeSource[$identifier])) {
                 unset($lifetimeSource[$identifier]);
-            } elseif (preg_match('%^(?<table>[a-z0-9_-]+)[_:](?<uid>\d+)$%', $identifier, $matches)) {
+            } elseif (preg_match('%^(?<table>[a-z\d_-]+)[_:](?<uid>\d+)$%', $identifier, $matches)) {
                 if (isset($lifetimeSource[$matches['table']])) {
                     unset($lifetimeSource[$matches['table']]);
                 }
             }
-
         }
 
         return $lifetimeSource;
-    }
-
-    /**
-     * Creates cache tags based on various input types.
-     *
-     * string, integer, float:
-     *     This one is used as cache tag. Add e.g. "pages_5" or "mycachetag".
-     *
-     * AbstractDomainObject:
-     *     The object is converted to the "$tableName_$uid", just like the
-     *     TCEmain/DataHandler acts.
-     *
-     * DataTransferInterface:
-     *     Its very innermostSelf is used like normal AbstractDomainObjects.
-     *
-     * array, Iterator:
-     *     All segments are joined by the underscore character, individuals
-     *     are treated according to the definition from above.
-     *
-     * @param mixed $params
-     * @return array
-     */
-    protected function createCacheTagsInternal($params): array
-    {
-        if (is_array($params) && count($params) === 1) {
-            $params = reset($params);
-        }
-
-        if ($params === null) {
-            return [];
-        } elseif (is_scalar($params)) {
-            return [$params];
-
-        } elseif (is_array($params)) {
-            $cacheParts = [];
-            foreach ($params as $cachePartSource) {
-                $cachePart = $this->createCacheTagsInternal($cachePartSource);
-                if ($cachePart !== null) {
-                    $cacheParts = array_merge($cacheParts, $cachePart);
-                }
-            }
-
-            return array_unique($cacheParts);
-
-        } elseif (is_object($params)) {
-            return $this->identifyCacheTagForObject($params);
-
-        }
-
-        return [];
-    }
-
-    /**
-     * Returns object identification helpers
-     *
-     * @return ObjectIdentificationHelperInterface[]
-     */
-    protected function getObjectIdentificationHelpers(): array
-    {
-        return $this->objectIdentificationHelpers;
-    }
-
-    protected function initializeObjectIdentificationHelpers()
-    {
-        $settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-        foreach ($settings['config.']['tx_nxcachetags.']['settings.']['objectIdentificationHelpers.'] as $key => $objectIdentificationHelperName) {
-            $this->objectIdentificationHelpers[$key] = $this->objectManager->get($objectIdentificationHelperName);
-        }
-        ksort($this->objectIdentificationHelpers);
-    }
-
-    protected function initializeCacheIdentifierDefaults()
-    {
-        $settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-        foreach ([
-                     'includeLanguage',
-                     'includeUserGroups',
-                     'includeBackendLogin',
-                     'includeRootPage',
-                     'includeDomainRecord'
-                 ] as $argumentName) {
-            if (isset($settings['config.']['tx_nxcachetags.']['settings.']['cacheIdentifierDefaults.'][$argumentName])) {
-                $this->cacheIdentifierDefaults[$argumentName] = (bool)$settings['config.']['tx_nxcachetags.']['settings.']['cacheIdentifierDefaults.'][$argumentName];
-            } else {
-                $this->cacheIdentifierDefaults[$argumentName] = true;
-            }
-        }
-    }
-
-    protected function getTyposcriptFrontendController(): TypoScriptFrontendController
-    {
-        return $GLOBALS['TSFE'];
     }
 
 }

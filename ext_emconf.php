@@ -1,5 +1,7 @@
 <?php
+/** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
+/** @noinspection PhpUndefinedVariableInspection */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'netlogix CacheTags',
     'description' => 'Helper mechanism to add cache tags to pages',
@@ -17,10 +19,10 @@ $EM_CONF[$_EXTKEY] = [
     'modify_tables' => '',
     'clearCacheOnLoad' => 0,
     'lockType' => '',
-    'version' => '4.0.0',
+    'version' => '5.0.0-dev',
     'constraints' => [
         'depends' => [
-            'typo3' => '9.5.0-10.99.99',
+            'typo3' => '10.4.0-10.4.99',
         ],
         'conflicts' => [],
         'suggests' => [],

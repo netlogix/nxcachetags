@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Netlogix\Nxcachetags\ObjectIdentificationHelper;
 
 use TYPO3\CMS\Core\Resource\File;
@@ -51,7 +53,7 @@ class FalObjectIdentificationHelper implements ObjectIdentificationHelperInterfa
 
     protected function getFileMetadataTag(File $file): string
     {
-        return 'sys_file_metadata_' . $file->_getMetaData()['uid'];
+        return 'sys_file_metadata_' . $file->getMetaData()->get()['uid'];
     }
 
     protected function getStorageTag(ResourceStorage $storage): string

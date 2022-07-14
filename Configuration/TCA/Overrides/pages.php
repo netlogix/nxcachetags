@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 defined('TYPO3_MODE') or die();
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -19,6 +20,6 @@ call_user_func(function () {
         ),
     );
 
-    ExtensionManagementUtility::addTCAcolumns('pages', $tempColumns, 1);
+    ExtensionManagementUtility::addTCAcolumns('pages', $tempColumns);
     ExtensionManagementUtility::addFieldsToPalette('pages', 'caching', 'nxcachetags_cacheperuser');
 });
