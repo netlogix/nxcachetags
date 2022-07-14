@@ -59,7 +59,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
 
     protected function findMinimalLifetimeForRecord(int $expires, string $tableName, int $uid): int
     {
-        if (!$GLOBALS['TCA'][$tableName]) {
+        if (!isset($GLOBALS['TCA'][$tableName])) {
             return $expires;
         }
         $now = $GLOBALS['ACCESS_TIME'];
@@ -117,7 +117,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
 
     protected function findMinimalLifetimeForTable(int $expires, string $tableName, array $storagePids = []): int
     {
-        if (!$GLOBALS['TCA'][$tableName]) {
+        if (!isset($GLOBALS['TCA'][$tableName])) {
             return $expires;
         }
 
