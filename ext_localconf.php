@@ -17,13 +17,4 @@ call_user_func(function () {
         ];
     }
 
-    $dispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
-    foreach (['afterInsertObject', 'afterUpdateObject', 'flushCacheForObject'] as $command) {
-        $dispatcher->connect(
-            \TYPO3\CMS\Extbase\Persistence\Generic\Backend::class,
-            $command,
-            \Netlogix\Nxcachetags\Persistence\Generic\Storage\BackendSlot::class,
-            'flushCacheForObject'
-        );
-    }
 });
