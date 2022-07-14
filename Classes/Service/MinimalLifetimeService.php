@@ -73,7 +73,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
                 $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT))
             )
             ->execute()
-            ->fetch();
+            ->fetchAssociative();
         if (!$record) {
             return $expires;
         }
@@ -149,7 +149,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
                         $queryBuilder->expr()->in('pid', array_map('intval', $storagePids))
                     );
                 }
-                $row = $query->execute()->fetch();
+                $row = $query->execute()->fetchAssociative();
                 if ($row && !is_null($row['minValue'])) {
                     $expires = (int)min($expires, $row['minValue']);
                 }
