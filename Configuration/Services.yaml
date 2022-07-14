@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Netlogix\Nxcachetags\:
+    resource: '../Classes/*'
+
+  Netlogix\Nxcachetags\Service\RenderingContextIdentificationService:
+    # the parent class has in inject for `ViewHelperVariableContainer` which cannot be injected
+    # disable autowiring for this class and let TYPO3 do the work
+    autowire: false

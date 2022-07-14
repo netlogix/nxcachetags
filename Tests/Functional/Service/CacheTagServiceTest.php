@@ -12,7 +12,6 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Domain\Model\Category;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class CacheTagServiceTest extends FunctionalTestCase
@@ -29,7 +28,6 @@ class CacheTagServiceTest extends FunctionalTestCase
         /** @var CacheTagService|MockObject|AccessibleMockObjectInterface $subject */
         $subject = $this->getAccessibleMock(CacheTagService::class, ['dummy']);
 
-        $subject->injectObjectManager(GeneralUtility::makeInstance(ObjectManager::class));
         $subject->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $subject->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
 
@@ -50,7 +48,6 @@ class CacheTagServiceTest extends FunctionalTestCase
         /** @var CacheTagService|MockObject|AccessibleMockObjectInterface $subject */
         $subject = $this->getAccessibleMock(CacheTagService::class, ['dummy']);
 
-        $subject->injectObjectManager(GeneralUtility::makeInstance(ObjectManager::class));
         $subject->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $subject->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
 
@@ -68,7 +65,7 @@ class CacheTagServiceTest extends FunctionalTestCase
      */
     public function itCanIdentifyCacheTagForObject($object, array $expectedResult)
     {
-        $subject = GeneralUtility::makeInstance(ObjectManager::class)->get(CacheTagService::class);
+        $subject = GeneralUtility::makeInstance(CacheTagService::class);
 
         $res = $subject->identifyCacheTagForObject($object);
 
@@ -81,7 +78,7 @@ class CacheTagServiceTest extends FunctionalTestCase
      */
     public function itReturnsEmptyCacheTagsFprUnknownObject()
     {
-        $subject = GeneralUtility::makeInstance(ObjectManager::class)->get(CacheTagService::class);
+        $subject = GeneralUtility::makeInstance(CacheTagService::class);
 
         $res = $subject->identifyCacheTagForObject(new \stdClass());
 
@@ -116,7 +113,6 @@ class CacheTagServiceTest extends FunctionalTestCase
         /** @var CacheTagService|MockObject|AccessibleMockObjectInterface $subject */
         $subject = $this->getAccessibleMock(CacheTagService::class, ['dummy']);
 
-        $subject->injectObjectManager(GeneralUtility::makeInstance(ObjectManager::class));
         $subject->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $subject->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
         $subject->initializeObject();
@@ -174,7 +170,7 @@ class CacheTagServiceTest extends FunctionalTestCase
      * @return void
      */
     public function itUsesDefaultForEnvironmentLifetime() {
-        $subject = GeneralUtility::makeInstance(ObjectManager::class)->get(CacheTagService::class);
+        $subject = GeneralUtility::makeInstance(CacheTagService::class);
 
         $subject->openEnvironment();
 
@@ -189,7 +185,7 @@ class CacheTagServiceTest extends FunctionalTestCase
      * @return void
      */
     public function itCanIncrementEnvironmentLifetime() {
-        $subject = GeneralUtility::makeInstance(ObjectManager::class)->get(CacheTagService::class);
+        $subject = GeneralUtility::makeInstance(CacheTagService::class);
 
         $subject->openEnvironment();
 
@@ -208,7 +204,7 @@ class CacheTagServiceTest extends FunctionalTestCase
      * @return void
      */
     public function itDoesNotAllowToDecrementEnvironmentLifetimeAboveCurrentValue() {
-        $subject = GeneralUtility::makeInstance(ObjectManager::class)->get(CacheTagService::class);
+        $subject = GeneralUtility::makeInstance(CacheTagService::class);
 
         $subject->openEnvironment();
 
@@ -236,7 +232,7 @@ class CacheTagServiceTest extends FunctionalTestCase
 
         $mockCacheManager->expects(self::once())->method('flushCachesByTag')->with($tag);
 
-        $subject = GeneralUtility::makeInstance(ObjectManager::class)->get(CacheTagService::class);
+        $subject = GeneralUtility::makeInstance(CacheTagService::class);
         $subject->injectCacheManager($mockCacheManager);
 
         $subject->flushCachesByTag($tag);
@@ -261,7 +257,6 @@ class CacheTagServiceTest extends FunctionalTestCase
 
         $subject->method('getTyposcriptFrontendController')->willReturn($mockTSFE);
 
-        $subject->injectObjectManager(GeneralUtility::makeInstance(ObjectManager::class));
         $subject->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $subject->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
         $subject->initializeObject();
@@ -277,7 +272,7 @@ class CacheTagServiceTest extends FunctionalTestCase
         $unknownTag = uniqid('tx_') . '_' . rand(1, 999);
         $knownTag = 'pages_' . rand(1, 999);
 
-        $subject = GeneralUtility::makeInstance(ObjectManager::class)->get(CacheTagService::class);
+        $subject = GeneralUtility::makeInstance(CacheTagService::class);
 
         $res = $subject->findTableCacheTagsForLifetimeSources(['pages', uniqid('tx_'), 'tt_content'], [$unknownTag, $knownTag]);
 

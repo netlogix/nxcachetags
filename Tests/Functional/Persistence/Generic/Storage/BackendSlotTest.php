@@ -11,7 +11,6 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\Category;
 use TYPO3\CMS\Extbase\Domain\Repository\CategoryRepository;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\Backend;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
@@ -38,20 +37,18 @@ class BackendSlotTest extends FunctionalTestCase
         $object = new Category();
         $object->setTitle(uniqid('title_'));
 
-        $om = GeneralUtility::makeInstance(ObjectManager::class);
-
         $subject = $this->getMockBuilder(BackendSlot::class)
             ->onlyMethods(['flushCacheForObject'])
             ->getMock();
-        $subject->injectCacheTagService($om->get(CacheTagService::class));
+        $subject->injectCacheTagService(GeneralUtility::makeInstance(CacheTagService::class));
 
         $subject->expects(self::once())->method('flushCacheForObject')->with($object);
         GeneralUtility::setSingletonInstance(BackendSlot::class, $subject);
 
 
-        $repo = $om->get(CategoryRepository::class);
+        $repo = GeneralUtility::makeInstance(CategoryRepository::class);
         $repo->add($object);
-        $om->get(PersistenceManager::class)->persistAll();
+        GeneralUtility::makeInstance(PersistenceManager::class)->persistAll();
     }
 
     /**
@@ -76,9 +73,7 @@ class BackendSlotTest extends FunctionalTestCase
             ->getConnectionForTable('sys_category')
             ->insert('sys_category', ['uid' => $uid, 'title' => uniqid('title_')]);
 
-        $om = GeneralUtility::makeInstance(ObjectManager::class);
-
-        $repo = $om->get(CategoryRepository::class);
+        $repo = GeneralUtility::makeInstance(CategoryRepository::class);
         /** @var Category $cat */
         $cat = $repo->findByUid($uid);
         $cat->setTitle(uniqid('newtitle_'));
@@ -87,7 +82,7 @@ class BackendSlotTest extends FunctionalTestCase
         $subject = $this->getMockBuilder(BackendSlot::class)
             ->onlyMethods(['flushCacheForObject'])
             ->getMock();
-        $subject->injectCacheTagService($om->get(CacheTagService::class));
+        $subject->injectCacheTagService(GeneralUtility::makeInstance(CacheTagService::class));
 
 
         $subject->expects(self::once())->method('flushCacheForObject')->with($cat);
@@ -95,7 +90,7 @@ class BackendSlotTest extends FunctionalTestCase
 
 
         $repo->update($cat);
-        $om->get(PersistenceManager::class)->persistAll();
+        GeneralUtility::makeInstance(PersistenceManager::class)->persistAll();
     }
 
 }

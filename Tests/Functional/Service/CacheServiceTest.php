@@ -7,7 +7,6 @@ namespace Netlogix\Nxcachetags\Tests\Functional\Service;
 use Netlogix\Nxcachetags\Service\CacheService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class CacheServiceTest extends FunctionalTestCase
@@ -19,7 +18,7 @@ class CacheServiceTest extends FunctionalTestCase
      * @return void
      */
     public function itReturnsContentFromClosure() {
-        $subject = GeneralUtility::makeInstance(ObjectManager::class)->get(CacheService::class);
+        $subject = GeneralUtility::makeInstance(CacheService::class);
 
         $GLOBALS['TSFE'] = $this->getMockBuilder(TypoScriptFrontendController::class)
             ->disableOriginalConstructor()
