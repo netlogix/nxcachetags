@@ -98,12 +98,12 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
         );
 
         foreach ($lifetimeSource as $tableName) {
-            if (in_array($tableName, $frameworkConfiguration['persistence']['noStoragePidForCacheLifetime'])) {
+            if (in_array($tableName, $frameworkConfiguration['persistence']['noStoragePidForCacheLifetime'] ?? [])) {
                 return [];
             }
         }
         $storagePids = array_unique(
-            GeneralUtility::intExplode(',', $frameworkConfiguration['persistence']['storagePid'])
+            GeneralUtility::intExplode(',', $frameworkConfiguration['persistence']['storagePid'] ?? '')
         );
 
         $storagePids = array_flip($storagePids);

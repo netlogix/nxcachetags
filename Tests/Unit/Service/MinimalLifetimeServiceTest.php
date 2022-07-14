@@ -12,6 +12,20 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
 class MinimalLifetimeServiceTest extends UnitTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $GLOBALS['TCA'] = [];
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        unset($GLOBALS['TCA']);
+    }
+
     /**
      * @test
      * @return void
