@@ -25,27 +25,21 @@ class EntityUpdatedInPersistenceTest extends FunctionalTestCase
      */
     public function itCallsEventAfterAddingObjectToPersistence()
     {
-        $repo = GeneralUtility::makeInstance(CategoryRepository::class);
-
-        $cat = new Category();
-        $cat->setTitle(uniqid('title_'));
-        $repo->add($cat);
-        GeneralUtility::makeInstance(PersistenceManager::class)->persistAll();
-
-        $uid = $cat->getUid();
-
-        $subject = GeneralUtility::makeInstance(EntityUpdatedInPersistence::class);
         $mockCacheTagService = $this->getMockBuilder(CacheTagService::class)
             ->onlyMethods(['flushCachesByTag'])
             ->getMock();
         $mockCacheTagService->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
         $mockCacheTagService->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $mockCacheTagService->initializeObject();
-        $mockCacheTagService->expects(self::once())->method('flushCachesByTag')->with('sys_category_' . $uid);
+        $mockCacheTagService->expects(self::atLeastOnce())->method('flushCachesByTag');
+        GeneralUtility::setSingletonInstance(CacheTagService::class, $mockCacheTagService);
 
-        $subject->injectCacheTagService($mockCacheTagService);
+        $repo = GeneralUtility::makeInstance(CategoryRepository::class);
 
-        GeneralUtility::addInstance(EntityUpdatedInPersistence::class, $subject);
+        $cat = new Category();
+        $cat->setTitle(uniqid('title_'));
+        $repo->add($cat);
+        GeneralUtility::makeInstance(PersistenceManager::class)->persistAll();
 
 
         $cat->setTitle(uniqid('title_'));

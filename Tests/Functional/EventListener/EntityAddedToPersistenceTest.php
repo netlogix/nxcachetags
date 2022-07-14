@@ -23,18 +23,16 @@ class EntityAddedToPersistenceTest extends FunctionalTestCase
      * @return void
      */
     public function itCallsEventAfterAddingObjectToPersistence() {
-        $subject = GeneralUtility::makeInstance(EntityAddedToPersistence::class);
         $mockCacheTagService = $this->getMockBuilder(CacheTagService::class)
             ->onlyMethods(['flushCachesByTag'])
             ->getMock();
         $mockCacheTagService->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
         $mockCacheTagService->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $mockCacheTagService->initializeObject();
-        $mockCacheTagService->expects(self::once())->method('flushCachesByTag');
+        $mockCacheTagService->expects(self::atLeastOnce())->method('flushCachesByTag');
 
-        $subject->injectCacheTagService($mockCacheTagService);
 
-        GeneralUtility::addInstance(EntityAddedToPersistence::class, $subject);
+        GeneralUtility::setSingletonInstance(CacheTagService::class, $mockCacheTagService);
 
 
         $object = new Category();
