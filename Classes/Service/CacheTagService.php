@@ -11,7 +11,6 @@ use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -22,11 +21,6 @@ class CacheTagService extends AbstractService implements SingletonInterface
 
     public const ENVIRONMENT_TAGS = 't';
     public const ENVIRONMENT_LIFETIME = 'l';
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected ObjectManagerInterface $objectManager;
 
     /**
      * @var ConfigurationManagerInterface
@@ -64,11 +58,6 @@ class CacheTagService extends AbstractService implements SingletonInterface
         ],
     ];
 
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
-
     public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
     {
         $this->configurationManager = $configurationManager;
@@ -91,7 +80,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
         );
         foreach ($settings['config.']['tx_nxcachetags.']['settings.']['objectIdentificationHelpers.'] as $key => $objectIdentificationHelperName) {
-            $this->objectIdentificationHelpers[$key] = $this->objectManager->get($objectIdentificationHelperName);
+            $this->objectIdentificationHelpers[$key] = GeneralUtility::makeInstance($objectIdentificationHelperName);
         }
         ksort($this->objectIdentificationHelpers);
     }

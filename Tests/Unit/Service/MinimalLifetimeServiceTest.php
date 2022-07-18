@@ -12,6 +12,7 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
 class MinimalLifetimeServiceTest extends UnitTestCase
 {
+
     /**
      * @test
      * @return void

@@ -1,0 +1,31 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Netlogix\Nxcachetags\:
+    resource: '../Classes/*'
+
+  Netlogix\Nxcachetags\Service\RenderingContextIdentificationService:
+    # the parent class has in inject for `ViewHelperVariableContainer` which cannot be injected
+    # disable autowiring for this class and let TYPO3 do the work
+    autowire: false
+
+  Netlogix\Nxcachetags\EventListener\EntityAddedToPersistence:
+    tags:
+      - name: event.listener
+        identifier: 'nxcachetags-afterInsertObject'
+        event: TYPO3\CMS\Extbase\Event\Persistence\EntityAddedToPersistenceEvent
+
+  Netlogix\Nxcachetags\EventListener\EntityUpdatedInPersistence:
+    tags:
+      - name: event.listener
+        identifier: 'nxcachetags-afterUpdateObject'
+        event: TYPO3\CMS\Extbase\Event\Persistence\EntityUpdatedInPersistenceEvent
+
+  Netlogix\Nxcachetags\EventListener\EntityRemovedFromPersistence:
+    tags:
+      - name: event.listener
+        identifier: 'nxcachetags-afterRemoveObject'
+        event: TYPO3\CMS\Extbase\Event\Persistence\EntityRemovedFromPersistenceEvent

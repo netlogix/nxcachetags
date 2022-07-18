@@ -30,8 +30,7 @@ class DomainObjectIdentificationHelperTest extends FunctionalTestCase
         $uid = rand(1, 9999);
 
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
-        $subject = $objectManager->get(DomainObjectIdentificationHelper::class);
+        $subject = GeneralUtility::makeInstance(DomainObjectIdentificationHelper::class);
         $mapper = $objectManager->get(DataMapper::class);
         $data = $mapper->map($type, [['uid' => $uid]]);
 
@@ -52,12 +51,10 @@ class DomainObjectIdentificationHelperTest extends FunctionalTestCase
     {
         $this->importDataSet('ntf://Database/be_users.xml');
 
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
-        $repo = $objectManager->get(BackendUserRepository::class);
+        $repo = GeneralUtility::makeInstance(BackendUserRepository::class);
         $data = $repo->findAll();
 
-        $subject = $objectManager->get(DomainObjectIdentificationHelper::class);
+        $subject = GeneralUtility::makeInstance(DomainObjectIdentificationHelper::class);
         $res = $subject->identifyCacheTagForObject($data);
 
         self::assertCount(1, $res);

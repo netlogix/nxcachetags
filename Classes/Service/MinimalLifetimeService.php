@@ -59,7 +59,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
 
     protected function findMinimalLifetimeForRecord(int $expires, string $tableName, int $uid): int
     {
-        if (!$GLOBALS['TCA'][$tableName]) {
+        if (!isset($GLOBALS['TCA'][$tableName])) {
             return $expires;
         }
         $now = $GLOBALS['ACCESS_TIME'];
@@ -73,7 +73,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
                 $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT))
             )
             ->execute()
-            ->fetch();
+            ->fetchAssociative();
         if (!$record) {
             return $expires;
         }
@@ -98,12 +98,12 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
         );
 
         foreach ($lifetimeSource as $tableName) {
-            if (in_array($tableName, $frameworkConfiguration['persistence']['noStoragePidForCacheLifetime'])) {
+            if (in_array($tableName, $frameworkConfiguration['persistence']['noStoragePidForCacheLifetime'] ?? [])) {
                 return [];
             }
         }
         $storagePids = array_unique(
-            GeneralUtility::intExplode(',', $frameworkConfiguration['persistence']['storagePid'])
+            GeneralUtility::intExplode(',', $frameworkConfiguration['persistence']['storagePid'] ?? '')
         );
 
         $storagePids = array_flip($storagePids);
@@ -117,7 +117,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
 
     protected function findMinimalLifetimeForTable(int $expires, string $tableName, array $storagePids = []): int
     {
-        if (!$GLOBALS['TCA'][$tableName]) {
+        if (!isset($GLOBALS['TCA'][$tableName])) {
             return $expires;
         }
 
@@ -149,7 +149,7 @@ class MinimalLifetimeService extends AbstractService implements SingletonInterfa
                         $queryBuilder->expr()->in('pid', array_map('intval', $storagePids))
                     );
                 }
-                $row = $query->execute()->fetch();
+                $row = $query->execute()->fetchAssociative();
                 if ($row && !is_null($row['minValue'])) {
                     $expires = (int)min($expires, $row['minValue']);
                 }
