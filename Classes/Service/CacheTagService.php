@@ -54,7 +54,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
     protected array $environments = [
         [
             self::ENVIRONMENT_TAGS => [],
-            self::ENVIRONMENT_LIFETIME => null,
+            self::ENVIRONMENT_LIFETIME => 0,
         ],
     ];
 
@@ -263,7 +263,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
     public function exposeCacheLifetime(array $params, TypoScriptFrontendController $tsfe)
     {
         $environmentLifetime = $this->getEnvironmentLifetime();
-        if (!$environmentLifetime) {
+        if ($environmentLifetime === 0) {
             return $params['cacheTimeout'];
         } else {
             return min($params['cacheTimeout'], $environmentLifetime);
@@ -342,6 +342,9 @@ class CacheTagService extends AbstractService implements SingletonInterface
 
     public function decreaseEnvironmentLifetime(int $lifetime)
     {
+        if ($lifetime === 0) {
+            return;
+        }
         foreach ($this->environments as &$environment) {
             if ($environment[self::ENVIRONMENT_LIFETIME] === 0 || ($environment[self::ENVIRONMENT_LIFETIME] > $lifetime)) {
                 $environment[self::ENVIRONMENT_LIFETIME] = $lifetime;
