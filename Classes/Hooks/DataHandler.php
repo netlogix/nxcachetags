@@ -64,6 +64,10 @@ class DataHandler implements SingletonInterface
             return;
         }
 
+        if (!array_key_exists('table', $params)) {
+            return;
+        }
+
         if (isset($dataHandler->datamap[$params['table']][$params['uid']]['l10n_parent'])) {
             $this->tagsToFlush[] = $params['table'] . '_' . $dataHandler->datamap[$params['table']][$params['uid']]['l10n_parent'];
         }
