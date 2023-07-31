@@ -79,7 +79,7 @@ class CacheTagService extends AbstractService implements SingletonInterface
         $settings = $this->configurationManager->getConfiguration(
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
         );
-        foreach ($settings['config.']['tx_nxcachetags.']['settings.']['objectIdentificationHelpers.'] as $key => $objectIdentificationHelperName) {
+        foreach (($settings['config.']['tx_nxcachetags.']['settings.']['objectIdentificationHelpers.'] ?? []) as $key => $objectIdentificationHelperName) {
             $this->objectIdentificationHelpers[$key] = GeneralUtility::makeInstance($objectIdentificationHelperName);
         }
         ksort($this->objectIdentificationHelpers);

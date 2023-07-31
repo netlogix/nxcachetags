@@ -4,21 +4,28 @@
   "description": "TYPO3 Extension \"nxcachetags\"",
   "license": "MIT",
   "require": {
-    "php": "^7.4 || ^8.0 || ^8.1",
-    "typo3/cms-core": "^10.4 || ^11.5",
+    "php": "^8.1",
+    "typo3/cms-core": "^11.5 || ^12.4",
     "ext-pdo": "*"
   },
   "require-dev": {
     "ext-sqlite3": "*",
     "nimut/testing-framework": "^6.0",
-    "nimut/phpunit-merger": "^1.1",
     "phpunit/phpcov": "^8.2"
   },
   "extra": {
     "typo3/cms": {
       "extension-key": "nxcachetags",
-      "web-dir": ".Build/Web",
+      "web-dir": ".Build/public",
       "cms-package-dir": "{$vendor-dir}/typo3/cms"
+    }
+  },
+  "config": {
+    "vendor-dir": ".Build/vendor",
+    "bin-dir": ".Build/bin",
+    "allow-plugins": {
+      "typo3/class-alias-loader": true,
+      "typo3/cms-composer-installers": true
     }
   },
   "autoload": {
@@ -31,18 +38,12 @@
       "Netlogix\\Nxcachetags\\Tests\\": "Tests/"
     }
   },
-  "config": {
-    "vendor-dir": ".Build/vendor",
-    "bin-dir": ".Build/bin",
-    "allow-plugins": {
-      "typo3/cms-composer-installers": true,
-      "typo3/class-alias-loader": true
-    }
-  },
   "scripts": {
+    "test-unit": "phpunit -c phpunit.xml",
+    "test-functional": "phpunit -c phpunit_functional.xml",
     "post-autoload-dump": [
       "@prepare-extension-test-structure",
-      "mkdir --parents .Build/logs/"
+      "mkdir -p .Build/logs/"
     ],
     "prepare-extension-test-structure": [
       "Nimut\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"

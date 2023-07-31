@@ -15,17 +15,17 @@ services:
   Netlogix\Nxcachetags\EventListener\EntityAddedToPersistence:
     tags:
       - name: event.listener
-        identifier: 'nxcachetags-afterInsertObject'
+        identifier: 'netlogix/nxcachetags/afterInsertObject'
         event: TYPO3\CMS\Extbase\Event\Persistence\EntityAddedToPersistenceEvent
 
   Netlogix\Nxcachetags\EventListener\EntityUpdatedInPersistence:
     tags:
       - name: event.listener
-        identifier: 'nxcachetags-afterUpdateObject'
+        identifier: 'netlogix/nxcachetags/afterUpdateObject'
         event: TYPO3\CMS\Extbase\Event\Persistence\EntityUpdatedInPersistenceEvent
 
   Netlogix\Nxcachetags\EventListener\EntityRemovedFromPersistence:
     tags:
       - name: event.listener
-        identifier: 'nxcachetags-afterRemoveObject'
+        identifier: 'netlogix/nxcachetags/afterRemoveObject'
         event: TYPO3\CMS\Extbase\Event\Persistence\EntityRemovedFromPersistenceEvent

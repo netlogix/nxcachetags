@@ -32,6 +32,7 @@
 
         <report>
             <php outputFile=".Build/logs/coverage/functional.cov"/>
+            <html outputDirectory=".Build/logs/coverage/functional"/>
         </report>
 
     </coverage>

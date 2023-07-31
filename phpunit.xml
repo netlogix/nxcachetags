@@ -27,6 +27,7 @@
 
         <report>
             <php outputFile=".Build/logs/coverage/unit.cov"/>
+            <html outputDirectory=".Build/logs/coverage/unit"/>
         </report>
 
     </coverage>
