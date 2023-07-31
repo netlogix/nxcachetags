@@ -29,3 +29,42 @@ services:
       - name: event.listener
         identifier: 'netlogix/nxcachetags/afterRemoveObject'
         event: TYPO3\CMS\Extbase\Event\Persistence\EntityRemovedFromPersistenceEvent
+
+  Netlogix\Nxcachetags\EventListener\ChangeCacheTimeout:
+    tags:
+      - name: event.listener
+        identifier: 'netlogix/nxcachetags/cache-timeout'
+        event: TYPO3\CMS\Frontend\Event\ModifyCacheLifetimeForPageEvent
+
+  Netlogix\Nxcachetags\EventListener\GeneratePublicUrlForResource:
+    tags:
+      - name: event.listener
+        identifier: 'netlogix/nxcachetags/generatepublicurlforresource'
+        event: TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent
+
+  Netlogix\Nxcachetags\EventListener\FlushCacheTagForFile:
+    tags:
+      - name: event.listener
+        identifier: 'netlogix/nxcachetags/flushCacheAfterFileContentsSet'
+        method: 'afterFileContentsSet'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileContentsSetEvent
+
+      - name: event.listener
+        identifier: 'netlogix/nxcachetags/flushCacheAfterFileDeleted'
+        method: 'afterFileDeleted'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileDeletedEvent
+
+      - name: event.listener
+        identifier: 'netlogix/nxcachetags/flushCacheAfterFileMoved'
+        method: 'afterFileMoved'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileMovedEvent
+
+      - name: event.listener
+        identifier: 'netlogix/nxcachetags/flushCacheAfterFileRenamed'
+        method: 'afterFileRenamed'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileRenamedEvent
+
+      - name: event.listener
+        identifier: 'netlogix/nxcachetags/flushCacheAfterFileReplaced'
+        method: 'afterFileReplaced'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileReplacedEvent
