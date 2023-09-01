@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Netlogix\Nxcachetags\Tests\Functional\Service;
 
 use Netlogix\Nxcachetags\Service\MinimalLifetimeService;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -20,7 +20,7 @@ class MinimalLifetimeServiceTest extends FunctionalTestCase
 
         $expires = time();
 
-        $subject = $this->getAccessibleMock(MinimalLifetimeService::class, ['dummy']);
+        $subject = $this->getAccessibleMock(MinimalLifetimeService::class, null);
         $res = $subject->_call('findMinimalLifetimeForRecord', $expires, 'pages', rand(1,9999));
 
         self::assertEquals($expires, $res);
@@ -37,13 +37,13 @@ class MinimalLifetimeServiceTest extends FunctionalTestCase
 
         $conn->insert('pages',['uid' => $uid, 'starttime' => $times['starttime'], 'endtime' => $times['endtime']]);
 
-        $subject = $this->getAccessibleMock(MinimalLifetimeService::class, ['dummy']);
+        $subject = $this->getAccessibleMock(MinimalLifetimeService::class, null);
         $res = $subject->_call('findMinimalLifetimeForRecord', $times['expires'], 'pages', $uid);
 
         self::assertEquals($expected, $res);
     }
 
-    public function lifetimeDataProvider(): array {
+    public static function lifetimeDataProvider(): array {
 
         $time = time();
 
@@ -80,7 +80,7 @@ class MinimalLifetimeServiceTest extends FunctionalTestCase
      * @return void
      */
     public function itCanFindLifetimeFromAllContentRecordsInPage() {
-        $this->importDataSet('ntf://Database/pages.xml');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
 
         $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
 
