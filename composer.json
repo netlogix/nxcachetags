@@ -10,7 +10,7 @@
   },
   "require-dev": {
     "ext-sqlite3": "*",
-    "typo3/testing-framework": "^8.0",
+    "typo3/testing-framework": "^7.0",
     "phpunit/phpcov": "^9.0",
     "phpunit/phpunit": "^10"
   },
