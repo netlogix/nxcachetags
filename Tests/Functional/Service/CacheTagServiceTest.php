@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace Netlogix\Nxcachetags\Tests\Functional\Service;
 
+use Netlogix\Nxcachetags\Domain\Model\Category;
 use Netlogix\Nxcachetags\Service\CacheTagService;
-use Nimut\TestingFramework\MockObject\AccessibleMockObjectInterface;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
-use TYPO3\CMS\Extbase\Domain\Model\Category;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class CacheTagServiceTest extends FunctionalTestCase
 {
-    protected $testExtensionsToLoad = ['typo3conf/ext/nxcachetags'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/nxcachetags'];
 
     /**
      * @test
@@ -26,7 +24,7 @@ class CacheTagServiceTest extends FunctionalTestCase
     public function itInitializesObjectIdentificationHelpers()
     {
         /** @var CacheTagService|MockObject|AccessibleMockObjectInterface $subject */
-        $subject = $this->getAccessibleMock(CacheTagService::class, ['dummy']);
+        $subject = $this->getAccessibleMock(CacheTagService::class, null);
 
         $subject->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $subject->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
@@ -46,7 +44,7 @@ class CacheTagServiceTest extends FunctionalTestCase
     public function itInitializesCacheIdentifierDefaults()
     {
         /** @var CacheTagService|MockObject|AccessibleMockObjectInterface $subject */
-        $subject = $this->getAccessibleMock(CacheTagService::class, ['dummy']);
+        $subject = $this->getAccessibleMock(CacheTagService::class, null);
 
         $subject->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $subject->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
@@ -76,7 +74,7 @@ class CacheTagServiceTest extends FunctionalTestCase
      * @test
      * @return void
      */
-    public function itReturnsEmptyCacheTagsFprUnknownObject()
+    public function itReturnsEmptyCacheTagsForUnknownObject()
     {
         $subject = GeneralUtility::makeInstance(CacheTagService::class);
 
@@ -88,7 +86,7 @@ class CacheTagServiceTest extends FunctionalTestCase
     /**
      * @return array
      */
-    public function cacheTagForObjectDataProvider(): array
+    public static function cacheTagForObjectDataProvider(): array
     {
         $data = [];
 
@@ -111,7 +109,7 @@ class CacheTagServiceTest extends FunctionalTestCase
     public function itCanCreateCacheTags($params, array $expectedOutput)
     {
         /** @var CacheTagService|MockObject|AccessibleMockObjectInterface $subject */
-        $subject = $this->getAccessibleMock(CacheTagService::class, ['dummy']);
+        $subject = $this->getAccessibleMock(CacheTagService::class, null);
 
         $subject->injectConfigurationManager(GeneralUtility::makeInstance(ConfigurationManager::class));
         $subject->injectCacheManager(GeneralUtility::makeInstance(CacheManager::class));
@@ -122,7 +120,7 @@ class CacheTagServiceTest extends FunctionalTestCase
         self::assertEquals($expectedOutput, $res);
     }
 
-    public function internalCacheTagsDataProvider(): array
+    public static function internalCacheTagsDataProvider(): array
     {
 
         $data = [
