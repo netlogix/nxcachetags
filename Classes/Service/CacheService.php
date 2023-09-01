@@ -89,7 +89,7 @@ class CacheService extends AbstractService implements SingletonInterface
         asort($identifierParts);
         $identifier = md5(serialize($identifierParts));
 
-        if (!$this->getTyposcriptFrontendController()->headerNoCache() && $this->cache->has($identifier)) {
+        if (!$this->getTyposcriptFrontendController()->no_cache && $this->cache->has($identifier)) {
             $cacheData = $this->cache->get($identifier);
             foreach ($cacheData[self::CACHE_ARGUMENT_TAGS] as $environmentCacheTags) {
                 $this->cacheTagService->addEnvironmentCacheTags($environmentCacheTags);
