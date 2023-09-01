@@ -10,8 +10,9 @@
   },
   "require-dev": {
     "ext-sqlite3": "*",
-    "nimut/testing-framework": "^6.0",
-    "phpunit/phpcov": "^8.2"
+    "typo3/testing-framework": "^8.0",
+    "phpunit/phpcov": "^9.0",
+    "phpunit/phpunit": "^10"
   },
   "extra": {
     "typo3/cms": {
@@ -46,7 +47,7 @@
       "mkdir -p .Build/logs/"
     ],
     "prepare-extension-test-structure": [
-      "Nimut\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
+      "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
     ]
   }
 }
