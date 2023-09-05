@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Netlogix\Nxcachetags\Tests\Functional\EventListener;
 
+use Netlogix\Nxcachetags\Domain\Repository\CategoryRepository;
 use Netlogix\Nxcachetags\Service\CacheTagService;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use Netlogix\Nxcachetags\Domain\Model\Category;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
-use TYPO3\CMS\Extbase\Domain\Model\Category;
-use TYPO3\CMS\Extbase\Domain\Repository\CategoryRepository;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 class EntityRemovedFromPersistenceTest extends FunctionalTestCase
 {
-    protected $testExtensionsToLoad = ['typo3conf/ext/nxcachetags'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/nxcachetags'];
 
     /**
      * @test

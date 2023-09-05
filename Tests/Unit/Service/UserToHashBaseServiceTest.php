@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Netlogix\Nxcachetags\Tests\Unit\Service;
 
 use Netlogix\Nxcachetags\Service\UserToHashBaseService;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class UserToHashBaseServiceTest extends UnitTestCase

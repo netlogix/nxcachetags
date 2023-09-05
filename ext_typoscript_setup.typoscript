@@ -17,12 +17,4 @@ config.tx_nxcachetags {
 	}
 }
 
-config.tx_extbase {
-	persistence {
-		noStoragePidForCacheLifetime {
-			## Every table name mentioned here is meant to not respect storage pids
-		}
-	}
-}
-
 module.tx_nxcachetags < config.tx_nxcachetags

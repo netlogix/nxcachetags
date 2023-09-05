@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Netlogix\Nxcachetags\Tests\Functional\Hooks;
 
 use Netlogix\Nxcachetags\Hooks\DataHandler;
-use Nimut\TestingFramework\MockObject\AccessibleMockObjectInterface;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use TYPO3\CMS\Core\Core\Bootstrap;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -18,7 +18,8 @@ class DataHandlerTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->importDataSet('ntf://Database/pages.xml');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
+
     }
 
     /**
@@ -112,17 +113,14 @@ class DataHandlerTest extends FunctionalTestCase
             ->getMock();
         $mockCacheManager->setCacheConfigurations($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']);
 
-
-        $mockCacheManager
-            ->expects(self::exactly(5))
-            ->method('flushCachesInGroupByTag')
-            ->withConsecutive(
+        $mockCacheManager->expects($this->exactly(5))->method('flushCachesInGroupByTag')
+            ->with(...$this->consecutiveParams(
                 ['pages','pages_' . $fakeTranslationParent],
                 ['pages','rootline_6'],
                 ['pages','rootline_5'],
                 ['pages','rootline_1'],
                 ['pages','rootline_0'],
-            );
+            ));
         GeneralUtility::setSingletonInstance(CacheManager::class, $mockCacheManager);
 
         $dataHandlerMock = $this->getMockBuilder(\TYPO3\CMS\Core\DataHandling\DataHandler::class)
@@ -160,5 +158,45 @@ class DataHandlerTest extends FunctionalTestCase
         self::assertEmpty($subject->_get('tagsToFlush'));
     }
 
+    // @see: https://gist.github.com/ziadoz/370fe63e24f31fd1eb989e7477b9a472
+    public function consecutiveParams(array ...$args): array
+    {
+        $callbacks = [];
+        $count = count(max($args));
 
+        for ($index = 0; $index < $count; $index++) {
+            $returns = [];
+
+            foreach ($args as $arg) {
+                if (! is_array($arg)) {
+                    throw new \InvalidArgumentException('Every array must be a list');
+                }
+
+                if (! isset($arg[$index])) {
+                    throw new \InvalidArgumentException(sprintf('Every array must contain %d parameters', $count));
+                }
+
+                $returns[] = $arg[$index];
+            }
+
+            $callbacks[] = $this->callback(new class ($returns) {
+                private array $returns;
+                public function __construct(array $returns)
+                {
+                    $this->returns = $returns;
+                }
+
+                public function __invoke(mixed $actual): bool
+                {
+                    if (count($this->returns) === 0) {
+                        return true;
+                    }
+
+                    return $actual === array_shift($this->returns);
+                }
+            });
+        }
+
+        return $callbacks;
+    }
 }

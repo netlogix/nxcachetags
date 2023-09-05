@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Netlogix\Nxcachetags\Tests\Functional\ObjectIdentificationHelper;
 
 use Netlogix\Nxcachetags\ObjectIdentificationHelper\FalObjectIdentificationHelper;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
 use TYPO3\CMS\Core\Resource\File;
@@ -13,7 +13,6 @@ use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 
 class FalObjectIdentificationHelperTest extends FunctionalTestCase
@@ -26,8 +25,9 @@ class FalObjectIdentificationHelperTest extends FunctionalTestCase
      */
     public function itCanIdentifyFileReference()
     {
-        $this->importDataSet('ntf://Database/sys_file_storage.xml');
-        $this->setUpBackendUserFromFixture(1);
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/sys_file_storage.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/be_users.csv');
+        $this->setUpBackendUser(1);
 
         $refUid = rand(1, 9999);
         $origUid = rand(1, 9999);
@@ -56,8 +56,9 @@ class FalObjectIdentificationHelperTest extends FunctionalTestCase
      */
     public function itCanIdentifyFile()
     {
-        $this->importDataSet('ntf://Database/sys_file_storage.xml');
-        $this->setUpBackendUserFromFixture(1);
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/sys_file_storage.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/be_users.csv');
+        $this->setUpBackendUser(1);
 
         $fileUid = rand(1, 9999);
         $metaUid = rand(1, 9999);
@@ -86,8 +87,9 @@ class FalObjectIdentificationHelperTest extends FunctionalTestCase
      */
     public function itCanIdentifyResourceStorage()
     {
-        $this->importDataSet('ntf://Database/sys_file_storage.xml');
-        $this->setUpBackendUserFromFixture(1);
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/sys_file_storage.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/be_users.csv');
+        $this->setUpBackendUser(1);
 
         $storage = GeneralUtility::makeInstance(StorageRepository::class)->findByUid(1);
 
@@ -106,8 +108,9 @@ class FalObjectIdentificationHelperTest extends FunctionalTestCase
      */
     public function itCanIdentifyExtbaseFileReference()
     {
-        $this->importDataSet('ntf://Database/sys_file_storage.xml');
-        $this->setUpBackendUserFromFixture(1);
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/sys_file_storage.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/be_users.csv');
+        $this->setUpBackendUser(1);
 
         $refUid = rand(1, 9999);
         $fileUid = rand(1, 9999);
@@ -118,9 +121,9 @@ class FalObjectIdentificationHelperTest extends FunctionalTestCase
 
         $refData = ['uid' => $refUid, 'uid_local' => $fileUid];
 
-        $ref = GeneralUtility::makeInstance(ObjectManager::class)
-            ->get(DataMapper::class)
-            ->map(\TYPO3\CMS\Extbase\Domain\Model\FileReference::class, [$refData])[0];
+        $container = $this->getContainer();
+        $mapper = $container->get(DataMapper::class);
+        $ref = $mapper->map(\TYPO3\CMS\Extbase\Domain\Model\FileReference::class, [$refData])[0];
 
         $subject = new FalObjectIdentificationHelper();
 
@@ -142,8 +145,9 @@ class FalObjectIdentificationHelperTest extends FunctionalTestCase
      */
     public function itCanIdentifyExtbaseFile()
     {
-        $this->importDataSet('ntf://Database/sys_file_storage.xml');
-        $this->setUpBackendUserFromFixture(1);
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/sys_file_storage.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/be_users.csv');
+        $this->setUpBackendUser(1);
 
         $fileUid = rand(1, 9999);
 
@@ -152,10 +156,9 @@ class FalObjectIdentificationHelperTest extends FunctionalTestCase
         $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('sys_file');
         $conn->insert('sys_file', $fileData);
 
-
-        $file = GeneralUtility::makeInstance(ObjectManager::class)
-            ->get(DataMapper::class)
-            ->map(\TYPO3\CMS\Extbase\Domain\Model\File::class, [$fileData])[0];
+        $container = $this->getContainer();
+        $mapper = $container->get(DataMapper::class);
+        $file = $mapper->map(\TYPO3\CMS\Extbase\Domain\Model\File::class, [$fileData])[0];
 
         $subject = new FalObjectIdentificationHelper();
 

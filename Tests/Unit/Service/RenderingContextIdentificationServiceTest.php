@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Netlogix\Nxcachetags\Tests\Unit\Service;
 
 use Netlogix\Nxcachetags\Service\RenderingContextIdentificationService;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\Variables\StandardVariableProvider;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;

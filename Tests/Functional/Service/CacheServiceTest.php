@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Netlogix\Nxcachetags\Tests\Functional\Service;
 
 use Netlogix\Nxcachetags\Service\CacheService;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use TYPO3\CMS\Core\Localization\Parser\XliffParser;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class CacheServiceTest extends FunctionalTestCase
 {
-    protected $testExtensionsToLoad = ['typo3conf/ext/nxcachetags'];
+
+    protected array $testExtensionsToLoad = ['typo3conf/ext/nxcachetags'];
 
     /**
      * @test
@@ -22,9 +24,9 @@ class CacheServiceTest extends FunctionalTestCase
 
         $GLOBALS['TSFE'] = $this->getMockBuilder(TypoScriptFrontendController::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['headerNoCache'])
             ->getMock();
-        $GLOBALS['TSFE']->method('headerNoCache')->willReturn(true);
+
+        $GLOBALS['TSFE']->no_cache = true;
 
         $content = uniqid('content_');
 

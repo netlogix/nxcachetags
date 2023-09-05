@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace Netlogix\Nxcachetags\Tests\Functional\ObjectIdentificationHelper;
 
 use Netlogix\Nxcachetags\ObjectIdentificationHelper\DomainObjectIdentificationHelper;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Domain\Model\BackendUser;
-use TYPO3\CMS\Extbase\Domain\Model\BackendUserGroup;
-use TYPO3\CMS\Extbase\Domain\Model\Category;
-use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
-use TYPO3\CMS\Extbase\Domain\Repository\BackendUserRepository;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use Netlogix\Nxcachetags\Domain\Model\BackendUser;
+use Netlogix\Nxcachetags\Domain\Model\BackendUserGroup;
+use Netlogix\Nxcachetags\Domain\Model\Category;
+use Netlogix\Nxcachetags\Domain\Model\FrontendUser;
+use Netlogix\Nxcachetags\Domain\Model\FrontendUserGroup;
+use Netlogix\Nxcachetags\Domain\Repository\BackendUserRepository;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 
 class DomainObjectIdentificationHelperTest extends FunctionalTestCase
 {
 
-    protected $testExtensionsToLoad = ['typo3conf/ext/nxcachetags'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/nxcachetags'];
 
     /**
      * @test
@@ -29,9 +29,9 @@ class DomainObjectIdentificationHelperTest extends FunctionalTestCase
     {
         $uid = rand(1, 9999);
 
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $container = $this->getContainer();
         $subject = GeneralUtility::makeInstance(DomainObjectIdentificationHelper::class);
-        $mapper = $objectManager->get(DataMapper::class);
+        $mapper = $container->get(DataMapper::class);
         $data = $mapper->map($type, [['uid' => $uid]]);
 
         $res = $subject->identifyCacheTagForObject($data[0]);
@@ -44,12 +44,10 @@ class DomainObjectIdentificationHelperTest extends FunctionalTestCase
      * @test
      *
      * @return void
-     * @throws \Nimut\TestingFramework\Exception\Exception
-     * @throws \TYPO3\CMS\Extbase\Object\Exception
      */
     public function itCanIdentifyDataFromQueryResult()
     {
-        $this->importDataSet('ntf://Database/be_users.xml');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/be_users.csv');
 
         $repo = GeneralUtility::makeInstance(BackendUserRepository::class);
         $data = $repo->findAll();
@@ -67,7 +65,7 @@ class DomainObjectIdentificationHelperTest extends FunctionalTestCase
      *
      * @return string[][]
      */
-    public function domainObjectDataProvider(): array
+    public static function domainObjectDataProvider(): array
     {
         return [
             Category::class => [
@@ -85,6 +83,10 @@ class DomainObjectIdentificationHelperTest extends FunctionalTestCase
             FrontendUser::class => [
                 FrontendUser::class,
                 'fe_users'
+            ],
+            FrontendUserGroup::class => [
+                FrontendUserGroup::class,
+                'fe_groups'
             ],
         ];
     }

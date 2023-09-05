@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Netlogix\Nxcachetags\Tests\Unit\ObjectIdentificationHelper;
 
 use Netlogix\Nxcachetags\ObjectIdentificationHelper\TcaRecordIdentificationHelper;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 class TcaRecordIdentificationHelperTest extends UnitTestCase
 {
@@ -94,7 +94,7 @@ class TcaRecordIdentificationHelperTest extends UnitTestCase
         self::assertEmpty($subject->identifyCacheTagForObject(uniqid()));
     }
 
-    public function tableNameDataProvider(): array
+    public static function tableNameDataProvider(): array
     {
         // no TCA is available in UnitTest
         $tables = ['pages', 'tt_content', 'be_users', 'sys_file', 'sys_file_reference', 'sys_category', uniqid('tx_')];
