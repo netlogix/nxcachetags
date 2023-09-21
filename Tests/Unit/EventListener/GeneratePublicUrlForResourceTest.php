@@ -54,8 +54,8 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
 
         $event = new GeneratePublicUrlForResourceEvent(
             $fileMock,
-            $this->createMock(ResourceInterface::class),
-            $this->createMock(DriverInterface::class)
+            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
         $subject = new GeneratePublicUrlForResource();
@@ -81,8 +81,8 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
 
         $event = new GeneratePublicUrlForResourceEvent(
             $processedFileMock,
-            $this->createMock(ResourceInterface::class),
-            $this->createMock(DriverInterface::class)
+            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
         $subject = new GeneratePublicUrlForResource();
@@ -103,8 +103,8 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
 
         $event = new GeneratePublicUrlForResourceEvent(
             $fileMock,
-            $this->createMock(ResourceInterface::class),
-            $this->createMock(DriverInterface::class)
+            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
         $subject = new GeneratePublicUrlForResource();
@@ -133,8 +133,8 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
 
         $event = new GeneratePublicUrlForResourceEvent(
             $fileMock,
-            $this->createMock(ResourceInterface::class),
-            $this->createMock(DriverInterface::class)
+            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
         $subject = new GeneratePublicUrlForResource();
@@ -148,9 +148,9 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
     public function itDoesNotAddCacheTagsIfFileIsNotInstanceOfFileInterface (): void
     {
         $event = new GeneratePublicUrlForResourceEvent(
-            $this->createMock(ResourceInterface::class),
-            $this->createMock(ResourceInterface::class),
-            $this->createMock(DriverInterface::class)
+            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
         $GLOBALS['TSFE']
