@@ -10,6 +10,7 @@ use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\MetaDataAspect;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\ResourceInterface;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
@@ -54,7 +55,7 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
 
         $event = new GeneratePublicUrlForResourceEvent(
             $fileMock,
-            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(ResourceStorage::class)->disableOriginalConstructor()->getMock(),
             $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
@@ -81,7 +82,7 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
 
         $event = new GeneratePublicUrlForResourceEvent(
             $processedFileMock,
-            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(ResourceStorage::class)->disableOriginalConstructor()->getMock(),
             $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
@@ -103,7 +104,7 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
 
         $event = new GeneratePublicUrlForResourceEvent(
             $fileMock,
-            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(ResourceStorage::class)->disableOriginalConstructor()->getMock(),
             $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
@@ -133,7 +134,7 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
 
         $event = new GeneratePublicUrlForResourceEvent(
             $fileMock,
-            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(ResourceStorage::class)->disableOriginalConstructor()->getMock(),
             $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
@@ -149,7 +150,7 @@ class GeneratePublicUrlForResourceTest extends UnitTestCase
     {
         $event = new GeneratePublicUrlForResourceEvent(
             $this->getMockBuilder(ResourceInterface::class)->getMock(),
-            $this->getMockBuilder(ResourceInterface::class)->getMock(),
+            $this->getMockBuilder(ResourceStorage::class)->disableOriginalConstructor()->getMock(),
             $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 
