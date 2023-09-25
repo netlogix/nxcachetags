@@ -5,9 +5,9 @@ namespace Netlogix\Nxcachetags\Tests\Unit\EventListener;
 
 use Netlogix\Nxcachetags\EventListener\ChangeCacheTimeout;
 use Netlogix\Nxcachetags\Service\CacheTagService;
-use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
-use TYPO3\CMS\Frontend\Event\ModifyCacheLifetimeForPageEvent;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 class ChangeCacheTimeoutTest extends UnitTestCase
 {
@@ -17,12 +17,17 @@ class ChangeCacheTimeoutTest extends UnitTestCase
      */
     public function itChangesCacheTimeoutIfEnvironmentLifetimeIsNotZero(): void
     {
+        $typo3VersionNumber = VersionNumberUtility::convertVersionNumberToInteger(
+            VersionNumberUtility::getNumericTypo3Version()
+        );
+        if ($typo3VersionNumber < 12000000) {
+            self::markTestSkipped('ModifyCacheLifetimeForPageEvent doesn\'t exist in TYPO3 11');
+        }
         $cacheTagServiceMock = $this->getMockBuilder(CacheTagService::class)
             ->disableOriginalConstructor()
             ->getMock();
         $cacheTagServiceMock->method('getEnvironmentLifetime')->willReturn(100);
-
-        $event = new ModifyCacheLifetimeForPageEvent(
+        $event = new \TYPO3\CMS\Frontend\Event\ModifyCacheLifetimeForPageEvent(
             200,
             123,
             [],
@@ -36,6 +41,7 @@ class ChangeCacheTimeoutTest extends UnitTestCase
 
         $this->assertEquals(100, $event->getCacheLifetime());
     }
+
     /**
      * @test
      * @return void
@@ -43,12 +49,18 @@ class ChangeCacheTimeoutTest extends UnitTestCase
 
     public function itDoesNotChangeCacheTimeoutIfEnvironmentLifetimeIsZero(): void
     {
+        $typo3VersionNumber = VersionNumberUtility::convertVersionNumberToInteger(
+            VersionNumberUtility::getNumericTypo3Version()
+        );
+        if ($typo3VersionNumber < 12000000) {
+            self::markTestSkipped('ModifyCacheLifetimeForPageEvent doesn\'t exist in TYPO3 11');
+        }
         $cacheTagServiceMock = $this->getMockBuilder(CacheTagService::class)
             ->disableOriginalConstructor()
             ->getMock();
         $cacheTagServiceMock->method('getEnvironmentLifetime')->willReturn(0);
 
-        $event = new ModifyCacheLifetimeForPageEvent(
+        $event = new \TYPO3\CMS\Frontend\Event\ModifyCacheLifetimeForPageEvent(
             200,
             123,
             [],
