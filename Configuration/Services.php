@@ -9,9 +9,9 @@ use Netlogix\Nxcachetags\EventListener\EntityAddedToPersistence;
 use Netlogix\Nxcachetags\EventListener\EntityRemovedFromPersistence;
 use Netlogix\Nxcachetags\EventListener\EntityUpdatedInPersistence;
 use Netlogix\Nxcachetags\EventListener\FlushCacheTagForFile;
+use Netlogix\Nxcachetags\EventListener\GeneratePublicUrlForResource;
 use Netlogix\Nxcachetags\Service\RenderingContextIdentificationService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
 return function (ContainerConfigurator $containerConfigurator){
@@ -63,7 +63,7 @@ return function (ContainerConfigurator $containerConfigurator){
             ]
         );
     }
-    $services->set(GeneratePublicUrlForResourceEvent::class)->tag(
+    $services->set(GeneratePublicUrlForResource::class)->tag(
         'event.listener',
         [
             'name' => 'event.listener',
