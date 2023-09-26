@@ -50,10 +50,8 @@ return function (ContainerConfigurator $containerConfigurator){
             'event' => 'TYPO3\CMS\Extbase\Event\Persistence\EntityRemovedFromPersistenceEvent'
         ]
     );
-    $typo3VersionNumber = VersionNumberUtility::convertVersionNumberToInteger(
-        VersionNumberUtility::getNumericTypo3Version()
-    );
-    if($typo3VersionNumber >= 12000000){
+        $versionInformation = GeneralUtility::makeInstance(Typo3Version::class);
+        if ($versionInformation->getMajorVersion() < 12) {
         $services->set(ChangeCacheTimeout::class)->tag(
             'event.listener',
             [

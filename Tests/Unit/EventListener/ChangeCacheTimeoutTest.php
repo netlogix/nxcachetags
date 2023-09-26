@@ -17,10 +17,8 @@ class ChangeCacheTimeoutTest extends UnitTestCase
      */
     public function itChangesCacheTimeoutIfEnvironmentLifetimeIsNotZero(): void
     {
-        $typo3VersionNumber = VersionNumberUtility::convertVersionNumberToInteger(
-            VersionNumberUtility::getNumericTypo3Version()
-        );
-        if ($typo3VersionNumber < 12000000) {
+        $versionInformation = GeneralUtility::makeInstance(Typo3Version::class);
+        if ($versionInformation->getMajorVersion() < 12) {
             self::markTestSkipped('ModifyCacheLifetimeForPageEvent doesn\'t exist in TYPO3 11');
         }
         $cacheTagServiceMock = $this->getMockBuilder(CacheTagService::class)
@@ -49,10 +47,8 @@ class ChangeCacheTimeoutTest extends UnitTestCase
 
     public function itDoesNotChangeCacheTimeoutIfEnvironmentLifetimeIsZero(): void
     {
-        $typo3VersionNumber = VersionNumberUtility::convertVersionNumberToInteger(
-            VersionNumberUtility::getNumericTypo3Version()
-        );
-        if ($typo3VersionNumber < 12000000) {
+        $versionInformation = GeneralUtility::makeInstance(Typo3Version::class);
+        if ($versionInformation->getMajorVersion() < 12) {
             self::markTestSkipped('ModifyCacheLifetimeForPageEvent doesn\'t exist in TYPO3 11');
         }
         $cacheTagServiceMock = $this->getMockBuilder(CacheTagService::class)
