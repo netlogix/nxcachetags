@@ -46,8 +46,7 @@ final class FlushCacheTagForFile
 
     private function flushCacheByFile(FileInterface $file)
     {
-        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-        $cacheManager->flushCachesByTag('sys_file_' . (int) $file->getProperty('uid'));
+        $this->cacheManager->flushCachesByTag('sys_file_' . (int) $file->getProperty('uid'));
     }
 
 }
