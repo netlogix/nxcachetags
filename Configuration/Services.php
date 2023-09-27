@@ -12,7 +12,8 @@ use Netlogix\Nxcachetags\EventListener\FlushCacheTagForFile;
 use Netlogix\Nxcachetags\EventListener\GeneratePublicUrlForResource;
 use Netlogix\Nxcachetags\Service\RenderingContextIdentificationService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 return function (ContainerConfigurator $containerConfigurator){
     $services = $containerConfigurator->services()

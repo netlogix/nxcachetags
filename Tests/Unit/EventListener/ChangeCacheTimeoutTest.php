@@ -6,6 +6,8 @@ namespace Netlogix\Nxcachetags\Tests\Unit\EventListener;
 use Netlogix\Nxcachetags\EventListener\ChangeCacheTimeout;
 use Netlogix\Nxcachetags\Service\CacheTagService;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
