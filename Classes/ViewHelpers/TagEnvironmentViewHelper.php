@@ -43,7 +43,7 @@ class TagEnvironmentViewHelper extends AbstractViewHelper
         $objectOrCacheTag = $this->arguments['objectOrCacheTag'];
         $lifetime = $this->arguments['lifetime'];
         $lifetimeSource = $this->arguments['lifetimeSource'];
-        if ($objectOrCacheTag === null) {
+        if ($objectOrCacheTag === null || $objectOrCacheTag === '') {
             $objectOrCacheTag = $this->renderChildren();
         }
 
