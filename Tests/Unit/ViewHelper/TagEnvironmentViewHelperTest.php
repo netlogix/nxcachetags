@@ -6,6 +6,7 @@ namespace Netlogix\Nxcachetags\Tests\Unit\ViewHelper;
 use Netlogix\Nxcachetags\Service\CacheTagService;
 use Netlogix\Nxcachetags\Service\MinimalLifetimeService;
 use Netlogix\Nxcachetags\ViewHelpers\TagEnvironmentViewHelper;
+use stdClass;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 class TagEnvironmentViewHelperTest extends UnitTestCase
@@ -40,7 +41,7 @@ class TagEnvironmentViewHelperTest extends UnitTestCase
         $tagEnvironmentViewHelper->initializeArguments();
 
         $arguments = [
-            'objectOrCacheTag' => '',
+            'objectOrCacheTag' => new stdClass(),
             'lifetime' => 3600,
             'lifetimeSource' => ['', ''],
         ];
